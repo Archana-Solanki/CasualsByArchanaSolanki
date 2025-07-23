@@ -7,13 +7,22 @@ const mongoDB = require("./db");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const ratelimit = require('express-rate-limit')
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://casuals-by-archana-solanki.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://casuals-by-archana-solanki.vercel.app"
-  ],
-  credentials: true         
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
