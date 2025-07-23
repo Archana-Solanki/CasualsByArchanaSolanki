@@ -1,0 +1,61 @@
+const express = require("express");
+const app = express();
+app.set("trust proxy", 1);
+require("dotenv").config();
+const port = 5000;
+const mongoDB = require("./db");
+const cors = require("cors");
+const cookieParser = require('cookie-parser');
+const ratelimit = require('express-rate-limit')
+app.use(cors({
+  origin: "http://localhost:5173", // 👈 frontend origin
+  credentials: true                // 👈 allow cookies
+}));
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+mongoDB();
+
+const apiLimiter = ratelimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too many requests from this IP, please try again after 15 minutes."
+});
+
+const loginLimter = ratelimit({
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  message: "Too many login attempts. Try again later."
+});
+
+const signUplimiter = ratelimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: "Too many signup attempts, please try later."
+});
+
+
+const SecuredManagementRoute = require("./Routes/ManagementRoute");
+app.use("/api/manage", apiLimiter,SecuredManagementRoute);
+
+const NonSecuredManagementRoute = require("./Routes/NonSecuredManagementRoutes");
+app.use("/api/manage", NonSecuredManagementRoute);
+
+const OrderRoutes = require("./Routes/userOrderRoutes");
+app.use("/api/user/order", OrderRoutes);
+
+const UserSignUp = require("./Routes/signupRoutes");
+app.use("/api", signUplimiter, UserSignUp);
+
+app.use("/api/user", loginLimter, require("./Routes/loginRoutes")); 
+
+app.use("/api", require("./Routes/profileRoutes"));    
+
+app.use("/api/display", require("./Routes/ProductDisplayRoutes")); 
+
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Example app listening on all ports`);
+});
