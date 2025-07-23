@@ -33,19 +33,31 @@ const apiLimiter = ratelimit({
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many requests from this IP, please try again after 15 minutes."
+  message: {
+    status: 429,
+    error: "Too many requests",
+    message: "Too many requests from this IP, please try again after 15 minutes."
+  }
 });
 
 const loginLimter = ratelimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
-  message: "Too many login attempts. Try again later."
+  message: {
+    status: 429,
+    error: "Rate limit exceeded",
+    message: "Too many login attempts. Try again later."
+  }
 });
 
 const signUplimiter = ratelimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: "Too many signup attempts, please try later."
+  message: {
+    status: 429,
+    error: "Rate limit exceeded",
+    message: "Too many signup attempts, please try later."
+  }
 });
 
 
