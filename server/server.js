@@ -28,41 +28,41 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 mongoDB();
 
-const apiLimiter = ratelimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    status: 429,
-    error: "Too many requests",
-    message: "Too many requests from this IP, please try again after 15 minutes."
-  }
-});
+// const apiLimiter = ratelimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: {
+//     status: 429,
+//     error: "Too many requests",
+//     message: "Too many requests from this IP, please try again after 15 minutes."
+//   }
+// });
 
-const loginLimter = ratelimit({
-  windowMs: 10 * 60 * 1000,
-  max: 5,
-  message: {
-    status: 429,
-    error: "Rate limit exceeded",
-    message: "Too many login attempts. Try again later."
-  }
-});
+// const loginLimter = ratelimit({
+//   windowMs: 10 * 60 * 1000,
+//   max: 5,
+//   message: {
+//     status: 429,
+//     error: "Rate limit exceeded",
+//     message: "Too many login attempts. Try again later."
+//   }
+// });
 
-const signUplimiter = ratelimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: {
-    status: 429,
-    error: "Rate limit exceeded",
-    message: "Too many signup attempts, please try later."
-  }
-});
+// const signUplimiter = ratelimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 10,
+//   message: {
+//     status: 429,
+//     error: "Rate limit exceeded",
+//     message: "Too many signup attempts, please try later."
+//   }
+// });
 
 
 const SecuredManagementRoute = require("./Routes/ManagementRoute");
-app.use("/api/manage", apiLimiter,SecuredManagementRoute);
+app.use("/api/manage",SecuredManagementRoute);
 
 const NonSecuredManagementRoute = require("./Routes/NonSecuredManagementRoutes");
 app.use("/api/manage", NonSecuredManagementRoute);
@@ -71,9 +71,9 @@ const OrderRoutes = require("./Routes/userOrderRoutes");
 app.use("/api/user/order", OrderRoutes);
 
 const UserSignUp = require("./Routes/signupRoutes");
-app.use("/api", signUplimiter, UserSignUp);
+app.use("/api", UserSignUp);
 
-app.use("/api/user", loginLimter, require("./Routes/loginRoutes")); 
+app.use("/api/user", require("./Routes/loginRoutes")); 
 
 app.use("/api", require("./Routes/profileRoutes"));    
 
