@@ -56,7 +56,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Shop", path: "/shop" },
+    { name: "Shop", path: "https://casuals-by-archana-solanki.vercel.app/shop" },
     { name: "Contact", scrollTo: "contact" }, // scroll target
   ];
 
