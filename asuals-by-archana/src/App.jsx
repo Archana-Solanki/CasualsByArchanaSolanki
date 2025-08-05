@@ -18,19 +18,21 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path='/' element={<LandingPage />} />
-          <Route path='/profile' element={<ProfilePage />} />
-          <Route path='/shop' element={<Shopping />} />
-          <Route path='/cart' element={<CartItem />} />
-          <Route path='/order' element={<Order />} />
-          <Route path='/cms' element={<CMS />} />
-          <Route path="/product/:id" element={<ShoppingOpen />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-        </Routes>
+        <div>
+          <Routes>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
+            <Route path='/shop' element={<Shopping />} />
+            <Route path='/cart' element={<CartItem />} />
+            <Route path='/order' element={<Order />} />
+            <Route path='/cms' element={<CMS />} />
+            <Route path="/product/:id" element={<ShoppingOpen />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+          </Routes>
+        </div>
       </Router>
     </CartProvider>
   );
