@@ -66,6 +66,7 @@ const ProfilePage = () => {
     try {
       // Optionally notify backend to clear the cookie
       await axios.post(`${apiUrl}/user/logout`, {}, { withCredentials: true });
+      localStorage.removeItem(cartData);
 
       // Redirect to login
       navigate("/login");

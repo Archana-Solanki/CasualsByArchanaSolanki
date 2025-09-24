@@ -35,7 +35,7 @@ export default function CustomCarousel() {
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -53,7 +53,7 @@ export default function CustomCarousel() {
       </div>
 
       {/* Navigation Arrows */}
-      <button
+      {/* <button
         onClick={prevSlide}
         className="absolute top-1/2 left-2 sm:left-6 transform -translate-y-1/2 text-white text-2xl sm:text-3xl bg-black/40 hover:bg-black/60 p-2 sm:p-3 rounded-full z-10 transition"
       >
@@ -64,10 +64,10 @@ export default function CustomCarousel() {
         className="absolute top-1/2 right-2 sm:right-6 transform -translate-y-1/2 text-white text-2xl sm:text-3xl bg-black/40 hover:bg-black/60 p-2 sm:p-3 rounded-full z-10 transition"
       >
         ❯
-      </button>
+      </button> */}
 
       {/* Indicators */}
-      <div className="absolute bottom-3 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3 z-10">
+      {/* <div className="absolute bottom-3 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3 z-10">
         {slides.map((_, index) => (
           <div
             key={index}
@@ -77,7 +77,7 @@ export default function CustomCarousel() {
             }`}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

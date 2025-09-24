@@ -238,10 +238,10 @@ const ProductDetailPage = () => {
                   )}
                 </div>
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="flex">{renderStars(4)}</div>
+                  {/* <div className="flex">{renderStars(4)}</div>
                   <span className="text-sm text-gray-600">
                     ({product.customerReviews?.length || 0} reviews)
-                  </span>
+                  </span> */}
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   {product.productDescription}
@@ -341,13 +341,13 @@ const ProductDetailPage = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <Truck className="w-4 h-4 text-gray-600" />
                   <span className="text-sm text-gray-600">
-                    Free delivery by Tomorrow
+                    Delivery within 2 days
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Shield className="w-4 h-4 text-gray-600" />
                   <span className="text-sm text-gray-600">
-                    30-day return policy
+                    No returns available — size exchange only
                   </span>
                 </div>
               </div>

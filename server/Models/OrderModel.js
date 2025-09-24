@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   productName: {
-    type: String, 
+    type: String,
     required: true,
   },
   productCategory: {
@@ -99,8 +99,45 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
 
+  deliveryCity: {
+    type: String,
+    required: true,
+  },
+
+  deliveryState: {
+    type: String,
+    required: true,
+  },
+
+  deliveryPincode: {
+    type: String,
+    required: true,
+  },
+
   deliveryInstructions: {
     type: String,
+  },
+
+  shiprocket: {
+    shiprocketorderId: { type: String },
+    shipmentId: { type: String },
+    awbCode: { type: String },
+    courierName: { type: String },
+    labelUrl: { type: String },
+    manifestUrl: { type: String },
+    pickupScheduledDate: { type: Date },
+    status: {
+      type: String,
+      enum: [
+        "not_created",
+        "created",
+        "pickup_scheduled",
+        "in_transit",
+        "delivered",
+        "cancelled",
+      ],
+      default: "not_created",
+    },
   },
 
   orderDate: {

@@ -53,7 +53,20 @@ const CartPage = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [checkoutData, setCheckoutData] = useState(null);
+  // initialize checkout data to avoid null access when modal opens
+  const [checkoutData, setCheckoutData] = useState({
+    customerName: "",
+    customerEmail: "",
+    customerPhone: "",
+    deliveryAddress: "",
+    deliveryPincode: "",
+    deliveryCity: "",
+    deliveryState: "",
+    deliveryInstructions: "",
+    paymentType: "Cash",
+  });
+
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   useEffect(() => {
   if (userDetails) {
     setCheckoutData((prev) => ({
@@ -61,7 +74,10 @@ const CartPage = () => {
       customerName: userDetails.userName || "",
       customerEmail: userDetails.userEmail || "",
       customerPhone: userDetails.userNumber || "",
-      deliveryAddress: userDetails.userAddress || "",
+      deliveryAddress: userDetails.userAddressLine1 + " " + userDetails.userAddressLine2|| "",
+      deliveryPincode: userDetails.userAddressPincode || "",
+      deliveryCity: userDetails.userAddressCity || "",
+      deliveryState: userDetails.userAddressState || "",
     }));
   }
 }, [userDetails]);
@@ -86,7 +102,7 @@ const CartPage = () => {
         productDiscount: item.discount || 0,
       })),
       orderTotal: total,
-      paymentStatus: "pending", // until confirmed
+      paymentStatus: "pending", 
       orderStatus: "pending",
     };
 
@@ -118,8 +134,8 @@ const CartPage = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  // const tax = subtotal * 0.08;
+  const total = subtotal ;
 
   return (
     <>
@@ -232,7 +248,7 @@ const CartPage = () => {
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <span className="text-gray-600">
-                                Return Policy:
+                                Exchange Policy:
                               </span>
                               <p className="font-medium text-black">
                                 {item.returnPolicy}
@@ -243,7 +259,7 @@ const CartPage = () => {
                               <p className="font-medium text-black">
                                 {item.deliveryExpectation ||
                                   item.deliveryTime ||
-                                  "3-5 business days"}
+                                  "2-4 business days"}
                               </p>
                             </div>
                           </div>
@@ -293,7 +309,7 @@ const CartPage = () => {
                         ₹{subtotal.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    {/* <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Tax</span>
                       <span className="font-medium text-black">
                         ₹{tax.toFixed(2)}
@@ -302,7 +318,7 @@ const CartPage = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Shipping</span>
                       <span className="font-medium text-green-600">FREE</span>
-                    </div>
+                    </div> */}
                     <div className="border-t border-gray-200 pt-3">
                       <div className="flex justify-between">
                         <span className="text-lg font-semibold text-black">
@@ -323,9 +339,9 @@ const CartPage = () => {
                   </button>
 
                   <div className="mt-4 text-center">
-                    <p className="text-xs text-gray-500">
+                    {/* <p className="text-xs text-gray-500">
                       Free shipping on orders over ₹75
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -336,7 +352,7 @@ const CartPage = () => {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
+          <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-semibold mb-4">Checkout</h2>
 
             <div className="space-y-4">
@@ -366,14 +382,54 @@ const CartPage = () => {
                 className="w-full border rounded px-4 py-2"
                 required
               />
-              <textarea
-                name="deliveryAddress"
-                value={checkoutData.deliveryAddress}
-                onChange={handleInputChange}
-                placeholder="Full Delivery Address"
-                className="w-full border rounded px-4 py-2"
-                required
-              ></textarea>
+
+              {/* Separate Address Fields */}
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-medium mb-3 text-gray-800">Delivery Address</h3>
+
+                <input
+                  type="text"
+                  name="deliveryAddress"
+                  value={checkoutData.deliveryAddress}
+                  onChange={handleInputChange}
+                  placeholder="Address Line 1 (House/Flat/Street)"
+                  className="w-full border rounded px-4 py-2 mb-3"
+                  required
+                />
+
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <input
+                    type="text"
+                    name="deliveryPincode"
+                    value={checkoutData.deliveryPincode}
+                    onChange={handleInputChange}
+                    placeholder="Pincode"
+                    className="w-full border rounded px-4 py-2"
+                    maxLength="6"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="deliveryCity"
+                    value={checkoutData.deliveryCity}
+                    onChange={handleInputChange}
+                    placeholder="City"
+                    className="w-full border rounded px-4 py-2"
+                    required
+                  />
+                </div>
+
+                <input
+                  type="text"
+                  name="deliveryState"
+                  value={checkoutData.deliveryState}
+                  onChange={handleInputChange}
+                  placeholder="State"
+                  className="w-full border rounded px-4 py-2"
+                  required
+                />
+              </div>
+
               <textarea
                 name="deliveryInstructions"
                 value={checkoutData.deliveryInstructions}
@@ -400,15 +456,27 @@ const CartPage = () => {
               <div className="flex justify-end space-x-4 pt-4">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100"
+                  className={`px-4 py-2 border rounded text-gray-700 hover:bg-gray-100 ${isPlacingOrder ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  disabled={isPlacingOrder}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOrderSubmit}
-                  className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                  className={`px-4 py-2 bg-black text-white rounded ${isPlacingOrder ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-800'}`}
+                  disabled={isPlacingOrder}
                 >
-                  Place Order
+                  {isPlacingOrder ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                      </svg>
+                      Placing Order...
+                    </span>
+                  ) : (
+                    'Place Order'
+                  )}
                 </button>
               </div>
             </div>

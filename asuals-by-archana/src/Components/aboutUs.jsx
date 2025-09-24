@@ -10,40 +10,31 @@ const AboutDesigner = () => {
           About the Designer
         </h2>
         <p className="text-gray-700 text-lg leading-relaxed space-y-2">
-          <span className="font-semibold">Archana Solanki</span> is a fashion
-          designer based in Pune, with over 10 years of experience in the
-          industry.
-          After a decade of creating custom pieces, she launched something close
-          to her heart,{" "}
-          <span className="font-bold italic">
-            ‘CASUALS by Archana Solanki.’
-          </span>
-          <br />
-          <br />
-          <span className="font-medium">
-            This isn’t just another brand in a crowded market.
-          </span>{" "}
-          It’s your new go-to for everyday pieces that feel like ‘you’ —{" "}
-          <span className="italic text-gray-800">
-            effortlessly cool, comfortable, and on trend.
-          </span>
-          <br />
-          You won’t find our styles in every closet. We design for{" "}
-          <span className="font-semibold">Gen Z and Millennials</span> who want
-          to feel good and look good simultaneously.
-          <br />
-          <br />
-          Whether you're working your day job, exploring the city, or just being
-          yourself, our pieces{" "}
-          <span className="underline underline-offset-4">
-            move with you and speak for you
-          </span>
-          .
-          <br />
-          <br />
-          <span className="font-semibold text-gray-800">
-            Because what you wear should feel just as original as you are.
-          </span>
+            <span className="font-semibold text-gray-900">
+              At Casuals by Archana Solanki, we’re redefining what “casual” means.
+            </span>
+            <br />
+            <br />
+            We are not here to chase trends,{" "}
+            <span className="font-medium text-gray-800">we are here to create them for you.</span>{" "}
+            Each drop is a{" "}
+            <span className="italic font-semibold">limited edition collection</span>, designed to make you feel stand out effortlessly.
+            <br />
+            <br />
+            Every garment is made with{" "}
+            <span className="font-semibold">high-quality fabrics</span> for everyday comfort, without compromising on style.{" "}
+            <span className="italic">We design with ‘you’ in mind.</span>
+            <br />
+            <br />
+            You won’t find our styles in every closet. Whether you are{" "}
+            <span className="underline underline-offset-4">working a day job, exploring the city, or just being yourself</span>, our smart casuals move with you.
+            <br />
+            <br />
+            <span className="font-semibold text-gray-800">
+              This brand is particularly built for millennials and Gen Z
+            </span>{" "}
+            who want to stand out without trying too hard, our casual wear blends{" "}
+            <span className="font-medium">comfort, uniqueness, and style</span> altogether.
         </p>
       </div>
 
@@ -55,7 +46,7 @@ const AboutDesigner = () => {
             alt="Designer"
             className="w-full h-[28rem] object-cover transform group-hover:scale-105 transition duration-700 ease-in-out"
           />
-          <div className="absolute inset-0 rounded-2xl group-hover:bg-black/5 transition duration-700"></div>
+          <div className="absolute inset-0 rounded-2xl  transition duration-700"></div>
         </div>
       </div>
     </div>

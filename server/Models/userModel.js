@@ -16,7 +16,26 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  userAddress: {
+  userAddressLine1: {
+    type: String,
+    required: true,
+  },
+
+  userAddressLine2: {
+    type: String,
+  },
+
+  userAddressPincode: {
+    type: String,
+    required: true,
+  },
+
+  userAddressCity:{
+    type:String,
+    required: true,
+  },
+
+  userAddressState: {
     type: String,
     required: true,
   },
@@ -27,21 +46,21 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
   },
 
-  userRole:{
+  userRole: {
     type: String,
-    enum: ["user" , "admin"],
-    default: "user"
+    enum: ["user", "admin"],
+    default: "user",
   },
 
-  resetToken:{
-    type: String
+  resetToken: {
+    type: String,
   },
 
-  resetTokenExpiry:{
-    type: Date
+  resetTokenExpiry: {
+    type: Date,
   },
 
-  signUpDate:{
+  signUpDate: {
     type: Date,
     default: Date.now,
   },

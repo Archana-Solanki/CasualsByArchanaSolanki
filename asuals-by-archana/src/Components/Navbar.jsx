@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { Link as ScrollLink, scroller } from "react-scroll";
-import Logo from "../assets/NewLogo.png";
+import Logo from "../assets/NewLogo1.png.jpg";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
 import axios from "axios";
 import { useCart } from "./ContextReducer";
@@ -18,9 +18,9 @@ export default function Navbar() {
   const data = useCart();
   useEffect(() => {
     const fetchProfile = async () => {
-      
+
       try {
-        const res = await axios.get(`${apiUrl}/profile`,{withCredentials: true});
+        const res = await axios.get(`${apiUrl}/profile`, { withCredentials: true });
         const user = res.data;
         setUserData({
           userName: user.userName || "",
@@ -56,8 +56,10 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Shop", path: "https://casuals-by-archana-solanki.vercel.app/shop" },
-    { name: "Contact", scrollTo: "contact" }, // scroll target
+    { name: "Shop", path: "/shop" },
+    { name: "Blogs", path: "/blogs" },
+    { name: "About Us", scrollTo: "about-us" },
+    { name: "Contact", scrollTo: "contact" },
   ];
 
   // Close dropdown when clicking outside
@@ -90,7 +92,7 @@ export default function Navbar() {
     setMenuOpen(false); // close menu on mobile
   };
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     try {
       await axios.post(`${apiUrl}/user/logout`, {}, { withCredentials: true });
 
@@ -105,7 +107,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full h-24 z-20 top-0 start-0 border-b border-gray-200 shadow-sm dark:bg-black dark:border-gray-700 transition-all">
+    <nav className="fixed w-full h-24 z-50 top-0 start-0 border-b border-gray-100 bg-white shadow-lg transition-all">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between pt-6 mx-auto">
         {/* Logo */}
         <RouterLink to="/" className="flex items-center space-x-3">
@@ -116,11 +118,11 @@ export default function Navbar() {
         <div className="flex items-center space-x-4 md:order-2">
           <button
             onClick={() => navigate("/cart")}
-            className="relative bg-black hover:bg-gray-800 rounded-full p-3 transition"
+            className="relative bg-white rounded-full p-3 transition"
           >
-            <HiOutlineShoppingBag className="text-white text-3xl" />
+            <HiOutlineShoppingBag className="text-black text-3xl" />
             {data.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-md leading-none">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-md leading-none sm:px-1 sm:py-0.5">
                 {data.length}
               </span>
             )}
@@ -130,39 +132,39 @@ export default function Navbar() {
             <div className="relative" ref={profileDropdownRef}>
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="bg-black hover:bg-gray-800 font-medium rounded-full text-3xl px-5 py-2 transition"
+                className="bg-white font-medium rounded-full text-3xl px-5 py-2 transition"
               >
-                <HiOutlineUser className="text-white text-3xl" />
+                <HiOutlineUser className="text-black text-3xl" />
               </button>
 
               {/* Profile Dropdown */}
               {profileDropdownOpen && userData && (
-                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-700 rounded-lg shadow-lg py-2 z-50">
-                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600">
-                    <span className="block text-xl text-gray-900 dark:text-white">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-200">
+                    <span className="block text-xl text-gray-900">
                       {userData.userName}
                     </span>
-                    <span className="block text-sm text-gray-500 dark:text-gray-400">
+                    <span className="block text-sm text-gray-500">
                       {userData.userEmail}
                     </span>
                   </div>
                   <RouterLink
                     to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setProfileDropdownOpen(false)}
                   >
                     Profile
                   </RouterLink>
                   <RouterLink
                     to="/order"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setProfileDropdownOpen(false)}
                   >
                     Orders And History
                   </RouterLink>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Logout
                   </button>
@@ -173,13 +175,13 @@ export default function Navbar() {
             <>
               <RouterLink
                 to="/login"
-                className="text-sm md:text-base font-medium text-black dark:text-white hover:underline"
+                className="text-sm md:text-base font-medium text-black hover:underline"
               >
                 Login
               </RouterLink>
               <RouterLink
                 to="/signup"
-                className="text-sm md:text-base font-medium text-black dark:text-white hover:underline"
+                className="text-sm md:text-base font-medium text-black hover:underline"
               >
                 Signup
               </RouterLink>
@@ -189,7 +191,7 @@ export default function Navbar() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             type="button"
-            className="inline-flex items-center p-2 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none rounded-lg md:hidden"
+            className="inline-flex items-center p-2 text-gray-800 hover:bg-gray-200 focus:outline-none rounded-lg md:hidden"
             aria-controls="navbar-menu"
             aria-expanded={menuOpen}
           >
@@ -212,17 +214,16 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <div
-          className={`${menuOpen ? "block" : "hidden"
-            } w-full md:flex md:w-auto md:order-1 bg-black`}
+          className={`${menuOpen ? "block" : "hidden"} w-full md:flex md:w-auto md:order-1 bg-white shadow-md rounded-lg md:shadow-none md:rounded-none`}
           id="navbar-menu"
         >
-          <ul className="flex flex-col md:flex-row md:space-x-10 text-xl font-medium text-black dark:text-white mt-4 md:mt-0">
+          <ul className="flex flex-col md:flex-row md:space-x-10 text-xl font-medium text-black mt-4 md:mt-0">
             {navLinks.map((link) => (
               <li key={link.name}>
                 {link.scrollTo ? (
                   <span
                     onClick={() => handleScrollClick(link.scrollTo)}
-                    className="block py-2 px-3 md:p-0 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
+                    className="block py-2 px-3 md:p-0 cursor-pointer hover:text-gray-600"
                   >
                     {link.name}
                   </span>
@@ -230,8 +231,8 @@ export default function Navbar() {
                   <RouterLink
                     to={link.path}
                     className={`block py-2 px-3 md:p-0 transition ${location.pathname === link.path
-                        ? "text-blue-600 dark:text-blue-400 font-semibold"
-                        : "hover:text-gray-600 dark:hover:text-gray-300"
+                        ? "text-blue-600 font-semibold"
+                        : "hover:text-gray-600"
                       }`}
                     onClick={() => setMenuOpen(false)}
                   >
@@ -244,5 +245,6 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+
   );
 }

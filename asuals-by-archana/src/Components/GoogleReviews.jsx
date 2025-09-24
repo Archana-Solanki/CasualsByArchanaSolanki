@@ -18,7 +18,7 @@ const reviews = [
   {
     name: "Shweta Jhamvar",
     stars: 5,
-    text: "You’ll fall in love with her designs, attention to detail, and honest suggestions. Punctual, creative, and affordable — she’s my go-to designer!",
+    text: "You'll fall in love with her designs, attention to detail, and honest suggestions. Punctual, creative, and affordable — she’s my go-to designer!",
     img: "https://lh3.googleusercontent.com/a-/ALV-UjXjmME5BtvUaUzQz2qg28yx22-LQPDCcBq2t15_eBzNGTometY=w90-h90-p-rp-mo-br100"
   },
   {
@@ -31,23 +31,53 @@ const reviews = [
 
 export default function GoogleReviewsCarousel() {
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1); // +1 forward, -1 back
 
+  // Auto-change every 7s
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % reviews.length);
+      next();
     }, 7000);
     return () => clearInterval(timer);
-  }, []);
+  }, [index]);
 
-  const next = () => setIndex((prev) => (prev + 1) % reviews.length);
-  const prev = () => setIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+  const next = () => {
+    setDirection(1);
+    setIndex((prev) => (prev + 1) % reviews.length);
+  };
+
+  const prev = () => {
+    setDirection(-1);
+    setIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+  };
+
+  const variants = {
+    enter: (dir) => ({
+      x: dir > 0 ? 100 : -100,
+      opacity: 0,
+      scale: 0.95
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, ease: 'easeInOut' }
+    },
+    exit: (dir) => ({
+      x: dir > 0 ? -100 : 100,
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.6, ease: 'easeInOut' }
+    })
+  };
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating - fullStars >= 0.5;
     return Array.from({ length: 5 }).map((_, i) => {
       if (i < fullStars) return <FaStar key={i} />;
-      if (i === fullStars && hasHalfStar) return <FaStar key={i + 'half'} className="opacity-50" />;
+      if (i === fullStars && hasHalfStar)
+        return <FaStar key={i + 'half'} className="opacity-50" />;
       return <FaRegStar key={i + 'empty'} />;
     });
   };
@@ -56,14 +86,15 @@ export default function GoogleReviewsCarousel() {
 
   return (
     <div className="relative w-full max-w-3xl mx-auto mt-20 px-4">
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
           key={index}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -30 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="min-h-[350px] bg-black/90 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl px-6 py-10 sm:px-10 text-white text-center flex flex-col items-center space-y-5 hover:scale-[1.01] transition-transform"
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          className="min-h-[350px] bg-black/90 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl px-6 py-10 sm:px-10 text-white text-center flex flex-col items-center space-y-5 hover:scale-[1.01] transition"
         >
           <img
             src={current.img}
@@ -80,18 +111,18 @@ export default function GoogleReviewsCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Buttons */}
+      {/* Optional manual buttons */}
       <button
         onClick={prev}
-        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md shadow-lg transition"
+        className="absolute left-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white p-2"
       >
-        <FaChevronLeft />
+        ‹
       </button>
       <button
         onClick={next}
-        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md shadow-lg transition"
+        className="absolute right-0 top-1/2 -translate-y-1/2 text-white/60 hover:text-white p-2"
       >
-        <FaChevronRight />
+        ›
       </button>
     </div>
   );

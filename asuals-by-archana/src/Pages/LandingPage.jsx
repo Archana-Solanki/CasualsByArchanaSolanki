@@ -7,16 +7,32 @@ import banner2 from "../assets/LandingBanner2.jpg";
 import Navbar from "../Components/Navbar";
 import Carousel from "../Components/productCarousel";
 import Contact from "../Components/contactFaq";
-import GoogleReviewsCarousel from "../Components/GoogleReviews";
+import GoogleReviewsCarousel from "../Components/Reviews";
 import Footer from "../Components/Footer";
 import Grid from "../Components/FashionGallery";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { scroller } from "react-scroll";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const LandingPage = () => {
   const [carouselProducts1, setCarouselProducts1] = useState([]);
   const [carouselProducts2, setCarouselProducts2] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      setTimeout(() => {
+        scroller.scrollTo(location.state.scrollTo, {
+          duration: 500,
+          smooth: true,
+          offset: -70
+        });
+
+        navigate(location.pathname, {replace: true, state: {} });
+      }, 300)
+    }
+  }, [location])
 
   useEffect(() => {
     async function fetchProducts() {
@@ -25,11 +41,11 @@ const LandingPage = () => {
         const data1 = await res1.json();
         const mapped1 = Array.isArray(data1)
           ? data1.map((p) => ({
-              id: p._id || p.id,
-              name: p.productName || p.name,
-              price: p.productCost || p.price,
-              image: (p.productImages && p.productImages[0]) || p.image,
-            }))
+            id: p._id || p.id,
+            name: p.productName || p.name,
+            price: p.productCost || p.price,
+            image: (p.productImages && p.productImages[0]) || p.image,
+          }))
           : [];
         setCarouselProducts1(mapped1);
 
@@ -37,11 +53,11 @@ const LandingPage = () => {
         const data2 = await res2.json();
         const mapped2 = Array.isArray(data2)
           ? data2.map((p) => ({
-              id: p._id || p.id,
-              name: p.productName || p.name,
-              price: p.productCost || p.price,
-              image: (p.productImages && p.productImages[0]) || p.image,
-            }))
+            id: p._id || p.id,
+            name: p.productName || p.name,
+            price: p.productCost || p.price,
+            image: (p.productImages && p.productImages[0]) || p.image,
+          }))
           : [];
         setCarouselProducts2(mapped2);
       } catch (err) {
@@ -62,50 +78,43 @@ const LandingPage = () => {
       <SignatureStyle />
       <div className="text-center mb-16">
         <h2 className="text-4xl font-extrabold font-display inline-block relative">
-          Women's Fashion Picks
+          Shop Womens's
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
         </h2>
       </div>
       <Carousel items={carouselProducts1} />
 
-      <div className="flex justify-center mt-10 mb-16">
-        <button onClick={() => navigate('/shop')} className="bg-black hover:bg-gray-800 text-white text-lg sm:text-xl font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300">
-          Explore Now
-        </button>
-      </div>
-
-      <img
-        src={banner1}
-        alt="Banner 1"
-        className="w-[80%]  mx-auto object-contain rounded-md"
-      />
-
-      <AboutUs />
-
       <div className="text-center mb-16">
         <h2 className="text-4xl font-extrabold font-display inline-block relative">
-          Men's Fashion Picks
+          Shop Men's 
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
         </h2>
       </div>
       <Carousel items={carouselProducts2} />
 
-      <div className="flex justify-center mt-10 mb-16">
-        <button onClick={() => navigate('/shop')} className="bg-black hover:bg-gray-800 text-white text-lg sm:text-xl font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300">
-          Shop Now
-        </button>
-      </div>
-
-      <Link to="/shop">
-        <img
+      
+      <img
           src={banner2}
           alt="Banner 2"
           className="w-[80%] mx-auto object-contain rounded-md mb-4 cursor-pointer"
+      />
+
+      <div id="about-us">
+        <AboutUs />
+      </div>
+  
+      <Link to="/shop">
+        <img
+        src={banner1}
+        alt="Banner 1"
+        className="w-[80%]  mx-auto object-contain rounded-2xl"
         />
       </Link>
 
       <GoogleReviewsCarousel />
-      <Contact />
+      <div id="contact">
+        <Contact />
+      </div>
       <Footer />
     </>
   );

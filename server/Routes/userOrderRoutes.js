@@ -3,13 +3,17 @@ const router = express.Router();
 const crypto = require("crypto");
 const Order = require("../Models/OrderModel");
 const Product = require("../Models/productModel");
+const { buildShiprocketOrder } = require("../utils/shiprocketMapper");
+const { createOrder } = require("../Services/Shiprocket");
 
 // Get Order History for a User
 router.post("/user-orders", async (req, res) => {
   const { email } = req.body;
 
   try {
-    const orders = await Order.find({ customerEmail: email }).sort({ orderDate: -1 });
+    const orders = await Order.find({ customerEmail: email }).sort({
+      orderDate: -1,
+    });
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({
@@ -28,9 +32,9 @@ router.post("/user-orders", async (req, res) => {
       success: false,
       message: "Server error while fetching orders.",
       error: error.message,
-  });
+    });
   }
-})
+});
 
 router.post("/newOrder", async (req, res) => {
   try {
@@ -39,6 +43,9 @@ router.post("/newOrder", async (req, res) => {
       customerPhone,
       deliveryAddress,
       deliveryInstructions,
+      deliveryCity,
+      deliveryState,
+      deliveryPincode,
       orderTotal,
       customerEmail,
       productsBought,
@@ -49,7 +56,7 @@ router.post("/newOrder", async (req, res) => {
       orderDate,
     } = req.body;
 
-    const generatedSignature = "test_signature"
+    const generatedSignature = "test_signature";
 
     if (razorpaySignature !== "test_signature") {
       console.log("Skipping real signature check for testing...");
@@ -58,12 +65,10 @@ router.post("/newOrder", async (req, res) => {
     for (const item of productsBought) {
       const product = await Product.findById(item.productID);
       if (!product) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: `Product not found: ${item.productID}`,
-          });
+        return res.status(404).json({
+          success: false,
+          message: `Product not found: ${item.productID}`,
+        });
       }
       // Check stock for color and size
       const colorStock = product.productStock.get(item.productColour);
@@ -110,6 +115,9 @@ router.post("/newOrder", async (req, res) => {
       customerName,
       customerPhone,
       deliveryAddress,
+      deliveryCity,
+      deliveryState,
+      deliveryPincode,
       deliveryInstructions,
       customerEmail,
       productsBought: formattedProducts,
@@ -123,23 +131,36 @@ router.post("/newOrder", async (req, res) => {
       orderDate,
     });
 
+    try {
+      const payload = buildShiprocketOrder(order);
+      const srResponse = await createOrder(payload);
+
+      order.shiprocket.shiprocketorderId = srResponse.order_id;
+      order.shiprocket.shipmentId = srResponse.shipment_id;
+      order.shiprocket.awbCode = srResponse.awb_code;
+      await order.save();
+
+    }catch(err){
+      console.log("ShipRocket integration failed:", err.response?.data || err.message)
+    }
+
     // Send order email (call EmailService directly)
     try {
-      const Email = require('../EmailService');
-      Email({
+      const {sendOrderEmail} = require("../EmailService");
+      sendOrderEmail({
         name: order.customerName,
         id: order.orderID || order.id,
         total: order.orderTotal,
-        items: order.productsBought.map(item => ({
+        items: order.productsBought.map((item) => ({
           name: item.productName,
-          quantity: item.quantity
+          quantity: item.quantity,
         })),
         customerEmail: order.customerEmail,
         address: order.deliveryAddress,
-        phone: order.customerPhone
+        phone: order.customerPhone,
       });
     } catch (e) {
-      console.error('Order email send failed:', e);
+      console.error("Order email send failed:", e);
     }
 
     res.status(201).json({ success: true, message: "Order placed", order });
@@ -148,6 +169,5 @@ router.post("/newOrder", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 
 module.exports = router;

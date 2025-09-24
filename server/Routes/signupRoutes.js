@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require("../Models/userModel");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const jwtsecret = process.env.JWT_SECRET;
 
 
 router.post("/signup", async(req, res) => {
@@ -15,14 +13,22 @@ router.post("/signup", async(req, res) => {
             userName,
             userNumber,
             userEmail,
-            userAddress,
+            userAddressLine1,
+            userAddressLine2,
+            userAddressPincode,
+            userAddressCity,
+            userAddressState
         } = req.body;
 
         const userData = {
             userName,
             userNumber,
             userEmail,
-            userAddress,
+            userAddressLine1,
+            userAddressLine2,
+            userAddressPincode,
+            userAddressCity,
+            userAddressState,
             userPassword : secPass,
         }
 

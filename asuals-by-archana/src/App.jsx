@@ -7,6 +7,8 @@ import ProfilePage from './Pages/Profile';
 import Shopping from './Pages/Shopping';
 import ShoppingOpen from './Pages/ShoppingOpen';
 import CartItem from './Pages/Cart';
+import Blogs from './Pages/blogs';
+import Blogopen from './Pages/blogopen';
 import { CartProvider } from './Components/ContextReducer';
 import Order from './Pages/OrderHistory'
 import CMS from './Pages/CMSmain'
@@ -26,6 +28,8 @@ function App() {
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/shop' element={<Shopping />} />
             <Route path='/cart' element={<CartItem />} />
+            <Route path='/blogs' element={<Blogs />} />
+            <Route path='/blogopen' element={<Blogopen />} />
             <Route path='/order' element={<Order />} />
             <Route path='/cms' element={<CMS />} />
             <Route path="/product/:id" element={<ShoppingOpen />} />

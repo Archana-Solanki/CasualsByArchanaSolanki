@@ -56,12 +56,16 @@ export default function FashionGallery() {
     <section className="pt-10 px-4 overflow-hidden">
       <div className="text-center mb-10">
         <h2 className="text-4xl font-extrabold font-display inline-block relative">
-          Redefine Your Wardrobe
+          Style Categories
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
         </h2>
+        <p className="mt-6 text-sm text-gray-500 italic">
+          *Images are just for reference purposes
+        </p>
       </div>
 
-      <div className="scroll-wrapper relative overflow-hidden w-full">
+
+      <div className="scroll-wrapper relative overflow-hidden w-full mt-[-10px]">
         <div className="scroll-track flex gap-6 w-max">
           {loopItems.map((item, i) => (
             <div

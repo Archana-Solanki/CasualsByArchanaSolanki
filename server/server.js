@@ -73,6 +73,9 @@ app.use("/api/user/order", OrderRoutes);
 const UserSignUp = require("./Routes/signupRoutes");
 app.use("/api", UserSignUp);
 
+const shiprocketRoutes = require("./Routes/Shiprocket.js");
+app.use("/api/shiprocket", shiprocketRoutes);
+
 app.use("/api/user", require("./Routes/loginRoutes")); 
 
 app.use("/api", require("./Routes/profileRoutes"));    
@@ -81,5 +84,5 @@ app.use("/api/display", require("./Routes/ProductDisplayRoutes"));
 
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Example app listening on all ports`);
+  console.log(`App is active on ${port}`);
 });
