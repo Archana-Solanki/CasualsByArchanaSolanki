@@ -7,9 +7,16 @@ import {
   Package,
   TrendingUp,
   Search,
+  Save,
+  Upload,
+  Calendar,
+  Clock,
+  FileText,
+  Image,
+  AlertCircle,
 } from "lucide-react";
 import axios from "axios";
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "";
 
 const CMSDashboard = () => {
   // State for size/qty inputs per color
@@ -22,6 +29,160 @@ const CMSDashboard = () => {
     name: "",
     gender: "Unisex",
   });
+
+  // Blog-related state
+  const [blogs, setBlogs] = useState([]);
+  const [blogFormData, setBlogFormData] = useState({
+    minutesRead: '',
+    date: new Date().toISOString().split('T')[0],
+    image1: '',
+    blogHeading: '',
+    blogSubheading1: '',
+    para1Heading: '',
+    para1Content: '',
+    para2Heading: '',
+    para2Content: '',
+    image2: '',
+    closingHeading: '',
+    closingContent: ''
+  });
+  const [blogLoading, setBlogLoading] = useState(false);
+  const [blogSuccess, setBlogSuccess] = useState(false);
+  const [blogError, setBlogError] = useState('');
+  const [showBlogModal, setShowBlogModal] = useState(false);
+  const [editingBlog, setEditingBlog] = useState(null);
+
+  // Fetch blogs on component mount
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/blogs`);
+      if (response.ok) {
+        const data = await response.json();
+        setBlogs(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    }
+  };
+
+  const handleBlogChange = (e) => {
+    const { name, value } = e.target;
+    setBlogFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleBlogSubmit = async () => {
+    setBlogLoading(true);
+    setBlogError('');
+    setBlogSuccess(false);
+
+    try {
+      // Basic validation
+      if (!blogFormData.minutesRead || !blogFormData.image1 || !blogFormData.blogHeading || !blogFormData.image2) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Convert minutesRead to number
+      const submitData = {
+        ...blogFormData,
+        minutesRead: parseInt(blogFormData.minutesRead)
+      };
+
+      const url = editingBlog ? `${apiUrl}/blogs/${editingBlog._id}` : `${apiUrl}/blogs/create`;
+      const method = editingBlog ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setBlogSuccess(true);
+      
+      // Reset form after successful submission
+      setBlogFormData({
+        minutesRead: '',
+        date: new Date().toISOString().split('T')[0],
+        image1: '',
+        blogHeading: '',
+        blogSubheading1: '',
+        para1Heading: '',
+        para1Content: '',
+        para2Heading: '',
+        para2Content: '',
+        image2: '',
+        closingHeading: '',
+        closingContent: ''
+      });
+
+      // Refresh blogs list
+      fetchBlogs();
+      
+      // Close modal after delay
+      setTimeout(() => {
+        setShowBlogModal(false);
+        setEditingBlog(null);
+        setBlogSuccess(false);
+      }, 2000);
+
+    } catch (err) {
+      setBlogError(err.message || 'Failed to save blog post');
+    } finally {
+      setBlogLoading(false);
+    }
+  };
+
+  const handleBlogEdit = (blog) => {
+    setEditingBlog(blog);
+    setBlogFormData({
+      minutesRead: blog.minutesRead.toString(),
+      date: new Date(blog.date).toISOString().split('T')[0],
+      image1: blog.image1,
+      blogHeading: blog.blogHeading,
+      blogSubheading1: blog.blogSubheading1 || '',
+      para1Heading: blog.para1Heading || '',
+      para1Content: blog.para1Content || '',
+      para2Heading: blog.para2Heading || '',
+      para2Content: blog.para2Content || '',
+      image2: blog.image2,
+      closingHeading: blog.closingHeading || '',
+      closingContent: blog.closingContent || ''
+    });
+    setShowBlogModal(true);
+  };
+
+  const handleBlogDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this blog post?')) {
+      try {
+        const response = await fetch(`${apiUrl}/blogs/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setBlogs(blogs.filter(blog => blog._id !== id));
+        } else {
+          alert('Failed to delete blog post');
+        }
+      } catch (error) {
+        console.error('Error deleting blog:', error);
+        alert('Failed to delete blog post');
+      }
+    }
+  };
 
   const handleAddCategory = async () => {
     const { name, gender } = categoryForm;
@@ -124,7 +285,7 @@ const CMSDashboard = () => {
     email: user.userEmail || "",
     phone: user.userNumber || "",
     orders: user.orders || 0,
-    address: user.userAddress,
+    address: user.userAddressLine1 +" "+ user.userAddressCity,
     joined: new Date(user.createdAt || Date.now()).toISOString().split("T")[0],
   });
 
@@ -433,6 +594,11 @@ const CMSDashboard = () => {
           (item.productName?.toLowerCase() || "").includes(term)
         )
     ),
+    blogs: blogs.filter(
+      (b) =>
+        (b.blogHeading?.toLowerCase() || "").includes(term) ||
+        (b.blogSubheading1?.toLowerCase() || "").includes(term)
+    ),
   };
 
   const StatCard = ({ icon: Icon, label, value, color }) => (
@@ -502,11 +668,9 @@ const CMSDashboard = () => {
             color="text-purple-600"
           />
           <StatCard
-            icon={TrendingUp}
-            label="Revenue"
-            value={`₹${orders
-              .reduce((sum, order) => sum + Number(order.totalAmount || 0), 0)
-              .toFixed(2)}`}
+            icon={FileText}
+            label="Total Blogs"
+            value={blogs.length}
             color="text-orange-600"
           />
         </div>
@@ -515,7 +679,7 @@ const CMSDashboard = () => {
         <div className="bg-white rounded-lg shadow">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              {["products", "customers", "orders"].map((tab) => (
+              {["products", "customers", "orders", "blogs"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -674,7 +838,7 @@ const CMSDashboard = () => {
                     <thead className="bg-gray-50">
                       <tr>
                         {["Name", "Email", "Phone", "Address"].map((header) => (
-                          <th key={header}>{header}</th>
+                          <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{header}</th>
                         ))}
                       </tr>
                     </thead>
@@ -803,18 +967,406 @@ const CMSDashboard = () => {
                 </div>
               </div>
             )}
+
+            {activeTab === "blogs" && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Blog Posts
+                  </h2>
+                  <button
+                    onClick={() => {
+                      setEditingBlog(null);
+                      setBlogFormData({
+                        minutesRead: '',
+                        date: new Date().toISOString().split('T')[0],
+                        image1: '',
+                        blogHeading: '',
+                        blogSubheading1: '',
+                        para1Heading: '',
+                        para1Content: '',
+                        para2Heading: '',
+                        para2Content: '',
+                        image2: '',
+                        closingHeading: '',
+                        closingContent: ''
+                      });
+                      setShowBlogModal(true);
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Blog Post
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {[
+                          "Title",
+                          "Subtitle",
+                          "Reading Time",
+                          "Date",
+                          "Actions",
+                        ].map((header) => (
+                          <th
+                            key={header}
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                          >
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {filteredData.blogs.map((blog) => (
+                        <TableRow key={blog._id}>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <img
+                                className="h-10 w-10 rounded-lg object-cover"
+                                src={blog.image1 || "/api/placeholder/60/60"}
+                                alt={blog.blogHeading}
+                              />
+                              <div className="ml-4 text-sm font-medium text-gray-900">
+                                {blog.blogHeading}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-900">
+                            {blog.blogSubheading1 || "N/A"}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-900">
+                            {blog.minutesRead} min
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-900">
+                            {new Date(blog.date).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="text-sm font-medium">
+                            <button
+                              onClick={() => handleBlogEdit(blog)}
+                              className="text-indigo-600 hover:text-indigo-900 mr-3"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleBlogDelete(blog._id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Blog Modal */}
+      {showBlogModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
+          <div className="bg-white w-full max-w-4xl h-[90vh] rounded-2xl shadow-xl flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="flex justify-between items-center px-6 py-4 border-b">
+              <h3 className="text-xl font-semibold text-gray-800">
+                {editingBlog ? "Edit Blog Post" : "Create New Blog Post"}
+              </h3>
+              <button
+                onClick={() => setShowBlogModal(false)}
+                className="text-gray-500 hover:text-red-500 text-2xl font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Success Message */}
+            {blogSuccess && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mx-6 mt-4">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-green-800">
+                      Blog post saved successfully!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {blogError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-6 mt-4">
+                <div className="flex items-center">
+                  <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
+                  <p className="text-sm font-medium text-red-800">{blogError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Scrollable Form Content */}
+            <div className="overflow-y-auto px-6 py-4 space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="minutesRead" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Reading Time (minutes) *
+                  </label>
+                  <input
+                    type="number"
+                    id="minutesRead"
+                    name="minutesRead"
+                    value={blogFormData.minutesRead}
+                    onChange={handleBlogChange}
+                    min="1"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                    placeholder="5"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="date" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Publication Date *
+                  </label>
+                  <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={blogFormData.date}
+                    onChange={handleBlogChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* Main Image */}
+              <div>
+                <label htmlFor="image1" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  <Image className="w-4 h-4 mr-2" />
+                  Main Blog Image URL *
+                </label>
+                <input
+                  type="url"
+                  id="image1"
+                  name="image1"
+                  value={blogFormData.image1}
+                  onChange={handleBlogChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+
+              {/* Blog Heading */}
+              <div>
+                <label htmlFor="blogHeading" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Blog Title *
+                </label>
+                <input
+                  type="text"
+                  id="blogHeading"
+                  name="blogHeading"
+                  value={blogFormData.blogHeading}
+                  onChange={handleBlogChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  placeholder="Enter your blog title"
+                />
+              </div>
+
+              {/* Blog Subheading */}
+              <div>
+                <label htmlFor="blogSubheading1" className="text-sm font-medium text-gray-700 mb-2 block">
+                  Blog Subtitle
+                </label>
+                <input
+                  type="text"
+                  id="blogSubheading1"
+                  name="blogSubheading1"
+                  value={blogFormData.blogSubheading1}
+                  onChange={handleBlogChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  placeholder="Enter your blog subtitle (optional)"
+                />
+              </div>
+
+              {/* Paragraph 1 */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">First Paragraph Section</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="para1Heading" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Paragraph 1 Heading
+                    </label>
+                    <input
+                      type="text"
+                      id="para1Heading"
+                      name="para1Heading"
+                      value={blogFormData.para1Heading}
+                      onChange={handleBlogChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                      placeholder="First section heading"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="para1Content" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Paragraph 1 Content
+                    </label>
+                    <textarea
+                      id="para1Content"
+                      name="para1Content"
+                      value={blogFormData.para1Content}
+                      onChange={handleBlogChange}
+                      rows={5}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-vertical"
+                      placeholder="Write your first paragraph content here..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Paragraph 2 */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Second Paragraph Section</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="para2Heading" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Paragraph 2 Heading
+                    </label>
+                    <input
+                      type="text"
+                      id="para2Heading"
+                      name="para2Heading"
+                      value={blogFormData.para2Heading}
+                      onChange={handleBlogChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                      placeholder="Second section heading"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="para2Content" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Paragraph 2 Content
+                    </label>
+                    <textarea
+                      id="para2Content"
+                      name="para2Content"
+                      value={blogFormData.para2Content}
+                      onChange={handleBlogChange}
+                      rows={5}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-vertical"
+                      placeholder="Write your second paragraph content here..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Second Image */}
+              <div>
+                <label htmlFor="image2" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  <Image className="w-4 h-4 mr-2" />
+                  Second Image URL *
+                </label>
+                <input
+                  type="url"
+                  id="image2"
+                  name="image2"
+                  value={blogFormData.image2}
+                  onChange={handleBlogChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  placeholder="https://example.com/second-image.jpg"
+                />
+              </div>
+
+              {/* Closing Section */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Closing Section</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="closingHeading" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Closing Heading
+                    </label>
+                    <input
+                      type="text"
+                      id="closingHeading"
+                      name="closingHeading"
+                      value={blogFormData.closingHeading}
+                      onChange={handleBlogChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                      placeholder="Conclusion heading"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="closingContent" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Closing Content
+                    </label>
+                    <textarea
+                      id="closingContent"
+                      name="closingContent"
+                      value={blogFormData.closingContent}
+                      onChange={handleBlogChange}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 resize-vertical"
+                      placeholder="Write your closing thoughts here..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-3">
+              <button
+                onClick={() => setShowBlogModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBlogSubmit}
+                disabled={blogLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-400 flex items-center"
+              >
+                {blogLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingBlog ? "Update" : "Create"} Blog Post
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Product Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
           <div className="bg-white w-full max-w-4xl h-[90vh] rounded-2xl shadow-xl flex flex-col overflow-hidden">
             {/* Header */}
             <div className="flex justify-between items-center px-6 py-4 border-b">
               <h3 className="text-xl font-semibold text-gray-800">
-                {editingItem ? "Edit" : "Add"} {modalType === "Product"}
+                {editingItem ? "Edit" : "Add"} Product
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -1252,8 +1804,7 @@ const CMSDashboard = () => {
         </div>
       )}
 
-      {/* category modal */}
-
+      {/* Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-md">
@@ -1300,6 +1851,16 @@ const CMSDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* API Endpoint Note */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>Note:</strong> Blog posts are submitted to <code className="bg-blue-100 px-2 py-1 rounded">/api/blogs</code>. 
+            Make sure your backend server is running and the route is properly configured.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

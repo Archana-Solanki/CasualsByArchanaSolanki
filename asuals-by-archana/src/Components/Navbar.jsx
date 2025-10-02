@@ -1,36 +1,38 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { Link as ScrollLink, scroller } from "react-scroll";
+import { Button, Link as ScrollLink, scroller } from "react-scroll";
 import Logo from "../assets/NewLogo1.png.jpg";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
 import axios from "axios";
 import { useCart } from "./ContextReducer";
-const apiUrl = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [activeSection, setActiveSection] = useState("home");
   const location = useLocation();
   const navigate = useNavigate();
   const profileDropdownRef = useRef(null);
-  const data = useCart();
   useEffect(() => {
     const fetchProfile = async () => {
-
       try {
-        const res = await axios.get(`${apiUrl}/profile`, { withCredentials: true });
+        const res = await axios.get(`${apiUrl}/profile`, {
+          withCredentials: true,
+        });
         const user = res.data;
         setUserData({
           userName: user.userName || "",
           userEmail: user.userEmail || "",
           userNumber: user.userNumber || "",
           userAddress: user.userAddress || "",
+          userCart: user.cartData || [],
           avatar:
             user.avatar ||
             "https://ui-avatars.com/api/?name=" +
-            encodeURIComponent(user.userName || "User"),
+              encodeURIComponent(user.userName || "User"),
           joinDate:
             user.joinDate ||
             (user.signUpDate
@@ -51,11 +53,24 @@ export default function Navbar() {
 
     fetchProfile();
   }, []);
+  useEffect(() => {
+    if (location.pathname === "/" && location.state?.scrollTo) {
+      setActiveSection(location.state.scrollTo);
 
+      // Scroll to the section after navigation
+      scroller.scrollTo(location.state.scrollTo, {
+        duration: 500,
+        smooth: true,
+        offset: -70,
+      });
 
+      // Clear state so it doesn't re-scroll if you stay on home
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location]);
 
   const navLinks = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/", scrollTo: "top" },
     { name: "Shop", path: "/shop" },
     { name: "Blogs", path: "/blogs" },
     { name: "About Us", scrollTo: "about-us" },
@@ -75,7 +90,7 @@ export default function Navbar() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, []); 
 
   const handleScrollClick = (scrollToId) => {
     if (location.pathname === "/") {
@@ -85,6 +100,7 @@ export default function Navbar() {
         smooth: true,
         offset: -70,
       });
+      setActiveSection(scrollToId);
     } else {
       // Navigate to home first, then scroll
       navigate("/", { state: { scrollTo: scrollToId } });
@@ -99,12 +115,13 @@ export default function Navbar() {
       setIsLoggedIn(false);
       setProfileDropdownOpen(false);
 
-      navigate('/')
+      navigate("/");
     } catch (error) {
       console.error("Logout failed", error);
       alert("Logout failed. Please try again.");
     }
   };
+
 
   return (
     <nav className="fixed w-full h-24 z-50 top-0 start-0 border-b border-gray-100 bg-white shadow-lg transition-all">
@@ -116,25 +133,38 @@ export default function Navbar() {
 
         {/* Right Buttons */}
         <div className="flex items-center space-x-4 md:order-2">
-          <button
-            onClick={() => navigate("/cart")}
-            className="relative bg-white rounded-full p-3 transition"
-          >
-            <HiOutlineShoppingBag className="text-black text-3xl" />
-            {data.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-md leading-none sm:px-1 sm:py-0.5">
-                {data.length}
-              </span>
-            )}
-          </button>
+          {isLoggedIn ? (
+            <button
+              onClick={() => navigate("/cart")}
+              className={`relative bg-white rounded-full p-3 transition 
+              ${
+                location.pathname === "/cart" ? "text-blue-600" : "text-black"
+              }`}
+            >
+              <HiOutlineShoppingBag className="text-3xl" />
+              {userData?.userCart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-md leading-none sm:px-1 sm:py-0.5">
+                  {userData.userCart.length}
+                </span>
+              )}
+            </button>
+          ) : (
+            <div></div>
+          )}
 
           {isLoggedIn ? (
             <div className="relative" ref={profileDropdownRef}>
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="bg-white font-medium rounded-full text-3xl px-5 py-2 transition"
+                className={`bg-white font-medium rounded-full px-5 py-2 transition 
+              ${
+                location.pathname === "/profile" ||
+                location.pathname === "/order"
+                  ? "text-blue-600"
+                  : "text-black"
+              }`}
               >
-                <HiOutlineUser className="text-black text-3xl" />
+                <HiOutlineUser className="text-3xl" />
               </button>
 
               {/* Profile Dropdown */}
@@ -213,28 +243,52 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links */}
+        {/* Navigation Links */}
         <div
-          className={`${menuOpen ? "block" : "hidden"} w-full md:flex md:w-auto md:order-1 bg-white shadow-md rounded-lg md:shadow-none md:rounded-none`}
+          className={`${menuOpen ? "block" : "hidden"} 
+              w-full md:flex md:w-auto md:order-1 
+              bg-white md:bg-transparent 
+              shadow-md md:shadow-none 
+              rounded-lg md:rounded-none 
+              transition-all duration-300 ease-in-out`}
           id="navbar-menu"
         >
-          <ul className="flex flex-col md:flex-row md:space-x-10 text-xl font-medium text-black mt-4 md:mt-0">
+          <ul
+            className="flex flex-col md:flex-row md:space-x-8 lg:space-x-12 
+                 text-lg md:text-xl font-medium text-black 
+                 mt-4 md:mt-0 md:items-center px-4 md:px-0 space-y-4 md:space-y-0"
+          >
             {navLinks.map((link) => (
               <li key={link.name}>
                 {link.scrollTo ? (
                   <span
                     onClick={() => handleScrollClick(link.scrollTo)}
-                    className="block py-2 px-3 md:p-0 cursor-pointer hover:text-gray-600"
+                    className={`block py-2 px-3 md:p-0 cursor-pointer transition 
+                hover:text-blue-500 
+                ${
+                  activeSection === link.scrollTo
+                    ? "text-blue-600 font-semibold"
+                    : ""
+                }`}
                   >
                     {link.name}
                   </span>
                 ) : (
                   <RouterLink
                     to={link.path}
-                    className={`block py-2 px-3 md:p-0 transition ${location.pathname === link.path
-                        ? "text-blue-600 font-semibold"
-                        : "hover:text-gray-600"
-                      }`}
-                    onClick={() => setMenuOpen(false)}
+                    className={`block py-2 px-3 md:p-0 transition 
+                hover:text-blue-500 
+                ${
+                  location.pathname === link.path
+                    ? "text-blue-600 font-semibold"
+                    : ""
+                }`}
+                    onClick={() => {
+                      setActiveSection("home"); // Only set home when clicking Home
+                      setMenuOpen(false);
+                      if (link.path === "/")
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                   >
                     {link.name}
                   </RouterLink>
@@ -245,6 +299,5 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-
   );
 }

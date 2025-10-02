@@ -26,13 +26,13 @@ const LandingPage = () => {
         scroller.scrollTo(location.state.scrollTo, {
           duration: 500,
           smooth: true,
-          offset: -70
+          offset: -70,
         });
 
-        navigate(location.pathname, {replace: true, state: {} });
-      }, 300)
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 300);
     }
-  }, [location])
+  }, [location]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -41,11 +41,11 @@ const LandingPage = () => {
         const data1 = await res1.json();
         const mapped1 = Array.isArray(data1)
           ? data1.map((p) => ({
-            id: p._id || p.id,
-            name: p.productName || p.name,
-            price: p.productCost || p.price,
-            image: (p.productImages && p.productImages[0]) || p.image,
-          }))
+              id: p._id || p.id,
+              name: p.productName || p.name,
+              price: p.productCost || p.price,
+              image: (p.productImages && p.productImages[0]) || p.image,
+            }))
           : [];
         setCarouselProducts1(mapped1);
 
@@ -53,11 +53,11 @@ const LandingPage = () => {
         const data2 = await res2.json();
         const mapped2 = Array.isArray(data2)
           ? data2.map((p) => ({
-            id: p._id || p.id,
-            name: p.productName || p.name,
-            price: p.productCost || p.price,
-            image: (p.productImages && p.productImages[0]) || p.image,
-          }))
+              id: p._id || p.id,
+              name: p.productName || p.name,
+              price: p.productCost || p.price,
+              image: (p.productImages && p.productImages[0]) || p.image,
+            }))
           : [];
         setCarouselProducts2(mapped2);
       } catch (err) {
@@ -72,7 +72,9 @@ const LandingPage = () => {
 
   return (
     <>
-      <Navbar />
+      <div id="top">
+        <Navbar />
+      </div>
       <MainCarousel />
       <Grid />
       <SignatureStyle />
@@ -86,28 +88,35 @@ const LandingPage = () => {
 
       <div className="text-center mb-16">
         <h2 className="text-4xl font-extrabold font-display inline-block relative">
-          Shop Men's 
+          Shop Men's
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
         </h2>
       </div>
       <Carousel items={carouselProducts2} />
 
-      
-      <img
-          src={banner2}
-          alt="Banner 2"
-          className="w-[80%] mx-auto object-contain rounded-md mb-4 cursor-pointer"
-      />
+      <div className="text-center mb-16">
+        <h2 className="text-4xl font-extrabold font-display inline-block relative">
+          Shop Unisex
+          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
+        </h2>
+      </div>
+      <Carousel items={carouselProducts2} />
+
+      {/* <img
+        src={banner2}
+        alt="Banner 2"
+        className="w-[80%] mx-auto object-contain rounded-md mb-4 cursor-pointer"
+      /> */}
 
       <div id="about-us">
         <AboutUs />
       </div>
-  
+
       <Link to="/shop">
         <img
-        src={banner1}
-        alt="Banner 1"
-        className="w-[80%]  mx-auto object-contain rounded-2xl"
+          src={banner1}
+          alt="Banner 1"
+          className="w-[80%]  mx-auto object-contain rounded-2xl"
         />
       </Link>
 

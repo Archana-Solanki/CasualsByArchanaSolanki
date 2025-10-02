@@ -1,5 +1,29 @@
 const mongoose = require("mongoose");
 
+const cartSchema = new mongoose.Schema({
+  productID:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Products",
+    required: true
+  },
+
+  productQuantity:{
+    type: Number,
+    required: true
+  },
+
+  productColor:{
+    type: String,
+    required: true
+  },
+
+  productSize: {
+    type: String,
+    required: true
+  }
+});
+
+
 const userSchema = new mongoose.Schema({
   userName: {
     type: String,
@@ -64,6 +88,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  cartData:{
+    type: [cartSchema]
+  }
 });
 
 module.exports = mongoose.model("Users", userSchema);

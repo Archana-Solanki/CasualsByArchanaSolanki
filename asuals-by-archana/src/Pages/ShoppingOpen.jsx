@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
-  Heart,
-  Star,
   Truck,
   Shield,
   ArrowLeft,
@@ -13,30 +11,42 @@ import {
 } from "lucide-react";
 import Navbar from "../Components/Navbar";
 import { useCart, useDispatchCart } from "../Components/ContextReducer";
+import { useCartActions } from "../Helper/CartHelper";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const ProductDetailPage = () => {
-  const dispatch = useDispatchCart();
-  const data = useCart();
   const { id: fullId } = useParams();
-  const id = fullId?.split("-")[0]; // supports slug-based routing too
+  const id = fullId?.split("-")[0];
   const location = useLocation();
   const [product, setProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
-  const [activeTab, setActiveTab] = useState("details");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { addToCart, updateCartItem, fetchCart } = useCartActions();
+  const [cartData, setCartData] = useState([]);
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const res = await axios.get(`${apiUrl}/cart`, { withCredentials: true });
+      setCartData(res.data);
+
+      fetchCart();
+    };
+
+    loadCart();
+  }, []);
 
   useEffect(() => {
     const checkLogin = async () => {
-      try{
-        const res = await axios.get(`${apiUrl}/profile`, {withCredentials: true});
-        if(res.status === 200)
-            setIsLoggedIn(true);
-      }catch(error){
-            setIsLoggedIn(false);
+      try {
+        const res = await axios.get(`${apiUrl}/profile`, { withCredentials: true });
+        if (res.status === 200)
+          setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
       }
     };
 
@@ -63,30 +73,21 @@ const ProductDetailPage = () => {
     fetchProduct();
   }, [ProductId]);
 
-  // Stock helpers for new schema
-  const isOutOfStock = (() => {
+  function isAnyStockAvailable() {
     if (!product || !product.productStock) return false;
-    const stock = product.productStock;
-    return Object.values(stock).every(
-      (sizes) => Object.values(sizes).every((qty) => Number(qty) <= 0)
-    );
-  })();
 
-  const isSizeOutOfStock = (color, size) => {
+    return Object.values(product.productStock).some(colorSizes =>
+      Object.values(colorSizes).some(qty => Number(qty) > 0)
+    );
+  }
+
+
+  const isSizeOutOfStock = (color, size, qty = 1) => {
     if (!product || !product.productStock) return false;
     const stock = product.productStock?.[color] || {};
-    return Number(stock[size] || 0) <= 0;
+    return Number(stock[size] || 0) <= qty;
   };
 
-  const renderStars = (rating) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        className={`w-4 h-4 ${i < rating ? "fill-black text-black" : "text-gray-300"
-          }`}
-      />
-    ));
-  };
 
   const nextImage = () => {
     setCurrentImage(
@@ -123,41 +124,24 @@ const ProductDetailPage = () => {
       alert("Please select a size before adding to cart.");
       return;
     }
-    if (isSizeOutOfStock(selectedColor, selectedSize)) {
+    if (isSizeOutOfStock(selectedColor, selectedSize, quantity)) {
       alert("Selected size is out of stock.");
       return;
     }
-    const productLabel = product.productName;
-    const existingItem = data.find(
+    const existingItem = cartData.find(
       (cartItem) =>
         cartItem.id === product._id && cartItem.size === selectedSize && cartItem.color === selectedColor
     );
     if (existingItem) {
-      await dispatch({
-        type: "UPDATE",
-        id: product._id,
-        name: productLabel,
-        price: product.productCost,
-        mrp: product.originalPrice,
-        quantity: quantity,
-        size: selectedSize,
-        color: selectedColor,
-      });
+      await updateCartItem(product._id, quantity, selectedColor, selectedSize)
       alert("🛒 Cart updated!\n\nWe've adjusted the quantity for this item.");
     } else {
-      await dispatch({
-        type: "ADD",
-        id: product._id,
-        name: productLabel,
-        price: product.productCost,
-        mrp: product.originalPrice,
-        quantity: quantity,
-        size: selectedSize,
-        color: selectedColor,
-        img: product.productImages?.[0] || "",
-        exchangePolicy: product.exchangePolicy,
-        availableSizes: product.productSize || [],
-      });
+      await addToCart({
+        productID: product._id,
+        productQuantity: quantity,
+        productColor: selectedColor,
+        productSize: selectedSize
+      })
       alert("🎉 Added to Cart!\n\nYour item has been successfully added.");
     }
   };
@@ -200,8 +184,8 @@ const ProductDetailPage = () => {
                     key={index}
                     onClick={() => setCurrentImage(index)}
                     className={`block w-16 h-16 rounded-lg overflow-hidden border-2 ${currentImage === index
-                        ? "border-black"
-                        : "border-transparent"
+                      ? "border-black"
+                      : "border-transparent"
                       }`}
                   >
                     <img
@@ -278,7 +262,7 @@ const ProductDetailPage = () => {
                 <h3 className="text-lg font-semibold mb-3">Size</h3>
                 <div className="flex flex-wrap gap-2">
                   {selectedColor && Object.keys(product.productStock?.[selectedColor] || {}).map((size) => {
-                    const outOfStock = isSizeOutOfStock(selectedColor, size);
+                    const outOfStock = isSizeOutOfStock(selectedColor, size, quantity);
                     return (
                       <button
                         key={size}
@@ -325,17 +309,18 @@ const ProductDetailPage = () => {
 
               {/* Availability */}
               <div className="bg-gray-50 p-4 rounded-lg">
-                {isOutOfStock ? (
+                {(!selectedColor || !selectedSize
+                  ? isAnyStockAvailable()
+                  : !isSizeOutOfStock(selectedColor, selectedSize, quantity)
+                ) ? (
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span className="font-semibold text-red-600">
-                      Out of Stock
-                    </span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="font-semibold text-green-600">In Stock</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="font-semibold">In Stock</span>
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span className="font-semibold text-red-600">Out of Stock</span>
                   </div>
                 )}
                 <div className="flex items-center space-x-2 mb-2">

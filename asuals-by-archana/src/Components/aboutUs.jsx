@@ -7,7 +7,7 @@ const AboutDesigner = () => {
       {/* Text Content (70%) */}
       <div className="w-full md:w-[70%] md:pl-28 text-center md:text-left">
         <h2 className="text-4xl font-serif font-bold mb-6 text-gray-900 leading-snug tracking-tight">
-          About the Designer
+          About Us
         </h2>
         <p className="text-gray-700 text-lg leading-relaxed space-y-2">
             <span className="font-semibold text-gray-900">

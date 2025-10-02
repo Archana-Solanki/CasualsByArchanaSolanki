@@ -342,8 +342,8 @@ const ProductListing = () => {
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'grid'
-                        ? 'bg-black text-white shadow-sm'
-                        : 'text-gray-500 hover:text-black'
+                      ? 'bg-black text-white shadow-sm'
+                      : 'text-gray-500 hover:text-black'
                       }`}
                   >
                     <Grid className="w-4 h-4" />
@@ -351,8 +351,8 @@ const ProductListing = () => {
                   <button
                     onClick={() => setViewMode('list')}
                     className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'list'
-                        ? 'bg-black text-white shadow-sm'
-                        : 'text-gray-500 hover:text-black'
+                      ? 'bg-black text-white shadow-sm'
+                      : 'text-gray-500 hover:text-black'
                       }`}
                   >
                     <List className="w-4 h-4" />
@@ -368,9 +368,24 @@ const ProductListing = () => {
           <div className="flex relative">
             {/* Filter Sidebar */}
             <aside
-              className={`${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-                } sticky lg:sticky top-[2500px] left-0 w-72 lg:w-80 h-[calc(100vh-90px)] bg-white border-r border-gray-200 p-6 overflow-y-auto transition-transform duration-300 z-10 lg:z-0`}
+              className={`
+    ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    fixed lg:sticky
+    top-0 lg:top-24
+    left-0
+    w-72 lg:w-80
+    h-full lg:h-[calc(100vh-6rem)]
+    bg-white
+    border-r border-gray-200
+    p-6
+    overflow-y-auto lg:overflow-hidden   // 👈 key change
+    transition-transform duration-300
+    z-50 lg:z-0
+  `}
             >
+
+
+
               <div className="lg:hidden flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
                 <button
@@ -419,8 +434,8 @@ const ProductListing = () => {
                       key={product._id}
                       onClick={() => handleClick(product)}
                       className={`cursor-pointer group ${viewMode === 'grid'
-                          ? 'bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:border-gray-300 transition-all duration-300'
-                          : 'flex bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300'
+                        ? 'bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:border-gray-300 transition-all duration-300'
+                        : 'flex bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-300'
                         }`}
                     >
                       {viewMode === 'grid' ? (

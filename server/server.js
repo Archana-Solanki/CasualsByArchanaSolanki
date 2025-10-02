@@ -82,6 +82,9 @@ app.use("/api", require("./Routes/profileRoutes"));
 
 app.use("/api/display", require("./Routes/ProductDisplayRoutes")); 
 
+app.use("/api/blogs", require("./Routes/BlogRoutes.js")); 
+
+app.use("/api/cart", require("./Routes/CartRoutes.js"))
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`App is active on ${port}`);

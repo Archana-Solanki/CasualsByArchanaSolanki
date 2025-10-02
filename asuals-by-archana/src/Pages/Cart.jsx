@@ -5,12 +5,39 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
+import { useCartActions } from "../Helper/CartHelper";
 
 const CartPage = () => {
-  const cartItems = useCart();
+  // const cartItems = useCart() || [];
   const dispatch = useDispatchCart();
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null)
+  const [cartData, setCartData] = useState([]);
+
+  const { updateCartItem, removeFromCart, clearCart, addToCart } = useCartActions();
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const res = await axios.get(`${apiUrl}/cart`, { withCredentials: true });
+      const normalized = res.data.map(item => ({
+        id: item.productID._id,
+        name: item.productID.productName,
+        price: item.productID.productCost,
+        discount: item.productDiscount || 0,
+        color: item.productColor,
+        size: item.productSize,
+        img: item.productID.productImages?.[0] || "",
+        quantity: item.productQuantity || 1,
+        returnPolicy: item.exchangePolicy ? "Exchangeable" : "Non-exchangeable",
+        deliveryExpectation: item.deliveryTime || "2-4 business days",
+      }));
+      console.log(normalized);
+      console.log(res.data);
+      setCartData(normalized);
+    };
+
+    loadCart();
+  }, []);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -27,28 +54,41 @@ const CartPage = () => {
   }, []);
 
 
-  // Update quantity using both size and color
-  const updateQuantity = (id, size, color, change) => {
-    const item = cartItems.find((item) => item.id === id && item.size === size && item.color === color);
+  const updateQuantity = async (id, size, color, delta) => {
+    const item = cartData.find(
+      (item) => item.id === id && item.size === size && item.color === color
+    );
     if (!item) return;
-    // Prevent quantity from going below 1
-    if (item.quantity + change < 1) return;
-    dispatch({
-      type: "UPDATE",
-      id,
-      size,
-      color,
-      quantity: change,
-      name: item.name,
-      price: item.price,
-      mrp: item.mrp,
-    });
+
+    const newQuantity = item.quantity + delta;
+
+    if (newQuantity < 1) return; // prevent negative quantity
+
+    // Call backend with the **new quantity**
+    await updateCartItem(id, newQuantity, color, size);
+
+    // Update local state immediately
+    setCartData((prev) =>
+      prev.map((i) =>
+        i.id === id && i.size === size && i.color === color
+          ? { ...i, quantity: newQuantity }
+          : i
+      )
+    );
   };
 
 
+
+
   // Remove item using both size and color
-  const removeItem = (id, size, color) => {
-    dispatch({ type: "REMOVE", id, size, color });
+  const removeItem = async (id, size, color) => {
+    await removeFromCart(id, size, color);
+
+    setCartData((prev) =>
+    prev.filter(
+      (item) => !(item.id === id && item.size === size && item.color === color)
+    )
+  );
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -68,19 +108,19 @@ const CartPage = () => {
 
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   useEffect(() => {
-  if (userDetails) {
-    setCheckoutData((prev) => ({
-      ...prev,
-      customerName: userDetails.userName || "",
-      customerEmail: userDetails.userEmail || "",
-      customerPhone: userDetails.userNumber || "",
-      deliveryAddress: userDetails.userAddressLine1 + " " + userDetails.userAddressLine2|| "",
-      deliveryPincode: userDetails.userAddressPincode || "",
-      deliveryCity: userDetails.userAddressCity || "",
-      deliveryState: userDetails.userAddressState || "",
-    }));
-  }
-}, [userDetails]);
+    if (userDetails) {
+      setCheckoutData((prev) => ({
+        ...prev,
+        customerName: userDetails.userName || "",
+        customerEmail: userDetails.userEmail || "",
+        customerPhone: userDetails.userNumber || "",
+        deliveryAddress: userDetails.userAddressLine1 + " " + userDetails.userAddressLine2 || "",
+        deliveryPincode: userDetails.userAddressPincode || "",
+        deliveryCity: userDetails.userAddressCity || "",
+        deliveryState: userDetails.userAddressState || "",
+      }));
+    }
+  }, [userDetails]);
 
 
   const handleInputChange = (e) => {
@@ -91,7 +131,7 @@ const CartPage = () => {
   const handleOrderSubmit = async () => {
     const orderPayload = {
       ...checkoutData,
-      productsBought: cartItems.map((item) => ({
+      productsBought: cartData.map((item) => ({
         productID: item.id,
         productName: item.name,
         productCategory: item.category || "",
@@ -102,7 +142,7 @@ const CartPage = () => {
         productDiscount: item.discount || 0,
       })),
       orderTotal: total,
-      paymentStatus: "pending", 
+      paymentStatus: "pending",
       orderStatus: "pending",
     };
 
@@ -118,7 +158,8 @@ const CartPage = () => {
       const data = await res.json();
       if (data.success) {
         alert("Order placed successfully!");
-        dispatch({ type: "DROP" });
+        clearCart();
+        setCartData([]);
         setShowModal(false);
       }
       else {
@@ -130,12 +171,12 @@ const CartPage = () => {
     }
   };
 
-  const subtotal = cartItems.reduce(
+  const subtotal = cartData.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   // const tax = subtotal * 0.08;
-  const total = subtotal ;
+  const total = subtotal;
 
   return (
     <>
@@ -163,7 +204,7 @@ const CartPage = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {cartItems.length === 0 ? (
+          {cartData.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingBag className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
@@ -178,7 +219,7 @@ const CartPage = () => {
               {/* Cart Items */}
               <div className="lg:col-span-8 pt-6">
                 <div className="space-y-6">
-                  {cartItems.map((item, idx) => (
+                  {cartData.map((item, idx) => (
                     <div
                       key={item.id + "-" + item.size + "-" + item.color + "-" + idx}
                       className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
@@ -230,9 +271,9 @@ const CartPage = () => {
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
-                              <span className="px-3 py-1 text-sm font-medium">
-                                {item.quantity}
-                              </span>
+
+                              <span className="px-3 py-1 text-sm font-medium">{item.quantity}</span>
+
                               <button
                                 onClick={() =>
                                   updateQuantity(item.id, item.size, item.color, 1)
@@ -241,6 +282,7 @@ const CartPage = () => {
                               >
                                 <Plus className="h-4 w-4" />
                               </button>
+
                             </div>
                           </div>
 
@@ -299,7 +341,7 @@ const CartPage = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">
                         Subtotal (
-                        {cartItems.reduce(
+                        {cartData.reduce(
                           (sum, item) => sum + item.quantity,
                           0
                         )}{" "}
