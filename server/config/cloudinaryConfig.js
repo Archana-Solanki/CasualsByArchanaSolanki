@@ -11,7 +11,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "casuals-by-archana", // Optional folder name in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg"],
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
     transformation: [{ width: 800, crop: "scale" }],
   },
 });

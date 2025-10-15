@@ -36,7 +36,11 @@ router.post("/login", async (req, res) => {
       userName: existingUser.userName,
       userEmail: existingUser.userEmail,
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "mysecretkey", {
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not configured");
+      return res.status(500).json({ success: false, message: "Server misconfiguration" });
+    }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
@@ -86,13 +90,16 @@ router.post("/forgot-password", async (req, res) => {
 
     // 2. Generate secure token
     const resetToken = crypto.randomBytes(32).toString("hex");
-    user.resetToken = resetToken;
+
+    const hashedToekn = await bcrypt.hash(resetToken, 10);
+    user.resetToken = hashedToekn;
     user.resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
 
     await user.save();
 
-    // 3. Prepare reset link
-    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+  // 3. Prepare reset link (use FRONTEND_URL environment variable in production)
+  const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const resetLink = `${frontend.replace(/\/$/, '')}/reset-password/${resetToken}`;
 
     // 4. Send password reset email
     await sendResetPasswordEmail(user.userEmail, resetLink);

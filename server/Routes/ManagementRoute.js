@@ -191,7 +191,7 @@ router.delete("/delete/:id", authenticateToken, requireAdmin, async (req, res) =
 // 🔸 Get User Route
 router.get("/all-users", authenticateToken, requireAdmin, async(req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find().select("-userPassword -resetToken -resetTokenExpiry");
     res.json(users);
   } catch (error) {
     console.log("Error in displaying products: ", error);
