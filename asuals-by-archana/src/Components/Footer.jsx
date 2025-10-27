@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import logo from "../assets/NewLogo1.jpg"
 
 
 export default function Footer() {
@@ -19,13 +20,12 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center mb-6">
-              <div className="flex flex-col items-start gap-1 sm:gap-2">
-                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-                  Casuals By
-                </h2>
-                <p className="text-xl sm:text-2xl text-gray-300 font-light">
-                  Archana Solanki
-                </p>
+              <div className="flex flex-col items-start gap-1 sm:gap-2 bg-white">
+                <img
+                  src={logo}
+                  alt="Casuals by Archana Solanki"
+                  className="w-48 sm:w-56 object-contain" // keeps proportions responsive
+                />
               </div>
 
             </div>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { Button, Link as ScrollLink, scroller } from "react-scroll";
-import Logo from "../assets/NewLogo1.png.jpg";
+import Logo from "../assets/NewLogo1.jpg";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi2";
 import axios from "axios";
 import { useCart } from "./ContextReducer";

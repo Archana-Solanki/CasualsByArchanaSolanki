@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Phone, Mail, Lock, Eye, EyeOff, MapPin, Zap } from 'lucide-react';
-import logo from "../assets/NewLogo1.png.jpg";
+import logo from "../assets/NewLogo1.jpg";
 import { useNavigate } from 'react-router-dom';
 
 const apiUrl = import.meta.env?.VITE_API_URL;

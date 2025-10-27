@@ -146,7 +146,7 @@ const CartPage = () => {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             });
-              
+
             if (verifyRes.data.success) {
               // Step 4: Save order to DB
               const orderPayload = {
@@ -163,7 +163,7 @@ const CartPage = () => {
                 paymentStatus: "paid",
                 orderStatus: "confirmed",
               };
-              
+
               await axios.post(`${apiUrl}/user/order/newOrder`, orderPayload);
               alert("✅ Payment successful! Order placed successfully.");
               clearCart();
@@ -202,7 +202,7 @@ const CartPage = () => {
         {/* Header */}
         <div className="border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
+            <div className="flex items-center justify-between h-16 flex-wrap gap-3 sm:gap-0">
               <button
                 onClick={() => navigate("/shop")}
                 className="flex items-center space-x-2 text-black hover:text-gray-600 transition-colors"
@@ -304,7 +304,7 @@ const CartPage = () => {
                           </div>
 
                           {/* Product Info */}
-                          <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 text-sm">
                             <div>
                               <span className="text-gray-600">
                                 Exchange Policy:

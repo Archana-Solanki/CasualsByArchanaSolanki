@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, ArrowLeft, Zap, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import logo from "../assets/NewLogo1.png.jpg";
+import logo from "../assets/NewLogo1.jpg";
 
 
 const apiUrl = import.meta.env?.VITE_API_URL;

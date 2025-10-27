@@ -1,83 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const slides = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&auto=format&fit=crop&q=80',
-    caption: 'Peaceful Landscape',
+    src: 'https://res.cloudinary.com/dr688utjz/video/upload/Video_2.mp4',
+    duration: 20000, // 20 sec
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1485125639709-a60c3a500bf1?w=1920&auto=format&fit=crop&q=80',
-    caption: 'Nature at its Best',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1543728069-a3f97c5a2f32?w=1920&auto=format&fit=crop&q=80',
-    caption: 'Majestic Mountains',
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1596725668413-d91baf68d9ce?w=1920&auto=format&fit=crop&q=80',
-    caption: 'Sunny Beach',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1537832816519-689ad163238b?w=1920&auto=format&fit=crop&q=80',
-    caption: 'Golden Sunset',
+    src: 'https://res.cloudinary.com/dr688utjz/video/upload/IMG_0412_qpln9w.mp4',
+    duration: 17000, // 17 sec
   },
 ];
 
 export default function CustomCarousel() {
   const [current, setCurrent] = useState(0);
+  const timeoutRef = useRef(null);
+  const videoRefs = useRef([]); // store refs to videos
 
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    const currentSlide = slides[current];
+
+    // Pause and reset all videos except the current one
+    videoRefs.current.forEach((video, index) => {
+      if (video) {
+        if (index === current) {
+          video.currentTime = 0;
+          video.play();
+        } else {
+          video.pause();
+          video.currentTime = 0;
+        }
+      }
+    });
+
+    // Timer for next slide based on duration
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(nextSlide, currentSlide.duration);
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [current]);
 
   return (
-    <div className="relative w-[80%] max-w-[1440px] h-[60vh] sm:h-[70vh] lg:h-[80vh] mx-auto overflow-hidden rounded-xl shadow-lg mt-28">
+    <div className="relative w-[80%] max-w-[1440px] h-[60vh] sm:h-[70vh] lg:h-[80vh] mx-auto overflow-hidden rounded-xl shadow-lg mt-28 bg-black">
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <div key={slide.id} className="min-w-full h-full relative">
-            <img src={slide.image} alt={slide.caption} className="w-full h-full object-cover" />
+            <video
+              ref={(el) => (videoRefs.current[index] = el)}
+              src={slide.src}
+              className="w-full h-full object-cover"
+            />
           </div>
         ))}
       </div>
 
-      {/* Navigation Arrows */}
-      {/* <button
-        onClick={prevSlide}
-        className="absolute top-1/2 left-2 sm:left-6 transform -translate-y-1/2 text-white text-2xl sm:text-3xl bg-black/40 hover:bg-black/60 p-2 sm:p-3 rounded-full z-10 transition"
-      >
-        ❮
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute top-1/2 right-2 sm:right-6 transform -translate-y-1/2 text-white text-2xl sm:text-3xl bg-black/40 hover:bg-black/60 p-2 sm:p-3 rounded-full z-10 transition"
-      >
-        ❯
-      </button> */}
-
       {/* Indicators */}
-      {/* <div className="absolute bottom-3 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3 z-10">
+      <div className="absolute bottom-3 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3 z-10">
         {slides.map((_, index) => (
           <div
             key={index}
             onClick={() => setCurrent(index)}
             className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all duration-300 border-2 ${
-              index === current ? 'bg-white border-white scale-110' : 'bg-gray-400 border-gray-300'
+              index === current
+                ? 'bg-white border-white scale-110'
+                : 'bg-gray-400 border-gray-300'
             }`}
           />
         ))}
-      </div> */}
+      </div>
     </div>
   );
 }

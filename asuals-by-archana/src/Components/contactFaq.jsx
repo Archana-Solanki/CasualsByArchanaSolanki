@@ -85,7 +85,7 @@ function FaqContactSection() {
   };
 
   return (
-    <div id="contact" className="px-4 sm:px-6 md:px-8 lg:px-16 py-8 md:py-16 font-sans bg-gray-50">
+    <div id="contact" className="px-4 sm:px-6 md:px-8 lg:px-16 py-8 md:py-16 font-sans bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
           {/* FAQ Section */}
