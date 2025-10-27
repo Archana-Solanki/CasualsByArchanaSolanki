@@ -4,8 +4,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Your email (e.g., adityabaldawa23@gmail.com)
-    pass: process.env.EMAIL_PASS, // App-specific password, NOT your actual password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -45,7 +45,7 @@ Team Casuals By Archana
 
   const adminMailOptions = {
     from: `"Order Notification Bot" <${process.env.EMAIL_USER}>`,
-    to: "aditya.baldawa@walchandsangli.ac.in",
+    to: "casualsbyarchanasolanki@gmail.com",
     subject: `📥 New Order Received – #${order.id} | Casuals By Archana`,
     text: `
 📦 A new order has been placed on Casuals By Archana.

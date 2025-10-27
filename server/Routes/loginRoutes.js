@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/userModel");
 const crypto = require("crypto");
 const { sendResetPasswordEmail } = require("../EmailService");
+const { validateBody, schemas } = require("../lib/validators");
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateBody(schemas.loginSchema), async (req, res) => {
   try {
     const { userNumber, userPassword } = req.body;
 
@@ -117,22 +118,34 @@ router.post("/reset-password/:token", async (req, res) => {
   const { newPassword } = req.body;
 
   try {
-    const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() },
-    });
+      if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+      }
 
-    if(!user)
-      return res.status(404).json({message: "User not found !!"});
+      // Find a user with a non-expired reset token (token is stored hashed)
+      const user = await User.findOne({
+        resetToken: { $exists: true },
+        resetTokenExpiry: { $gt: Date.now() },
+      });
 
-    const hashPass = await bcrypt.hash(newPassword, 10);
-    user.userPassword = hashPass;
-    user.resetToken = undefined;
-    user.resetTokenExpiry = undefined;
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'Invalid or expired token' });
+      }
 
-    await user.save();
+      // Compare provided token with stored bcrypt hash
+      const isValid = await bcrypt.compare(token, user.resetToken);
+      if (!isValid) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+      }
 
-    return res.status(200).json({success: true, message: "Password updated succesful"});
+      // Update password and clear reset token fields
+      const hashPass = await bcrypt.hash(newPassword, 10);
+      user.userPassword = hashPass;
+      user.resetToken = undefined;
+      user.resetTokenExpiry = undefined;
+      await user.save();
+
+      return res.status(200).json({ success: true, message: 'Password updated successfully' });
   } catch (error) {
     console.error("Error updating password", error);
     res.status(500).json({success: false, message: "Internal server error"});

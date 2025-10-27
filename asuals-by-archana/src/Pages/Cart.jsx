@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react";
-import { useCart, useDispatchCart } from "../Components/ContextReducer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import axios from "axios";
-const apiUrl = import.meta.env.VITE_API_URL;
 import { useCartActions } from "../Helper/CartHelper";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const CartPage = () => {
-  // const cartItems = useCart() || [];
-  const dispatch = useDispatchCart();
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null)
   const [cartData, setCartData] = useState([]);
@@ -31,8 +28,6 @@ const CartPage = () => {
         returnPolicy: item.exchangePolicy ? "Exchangeable" : "Non-exchangeable",
         deliveryExpectation: item.deliveryTime || "2-4 business days",
       }));
-      console.log(normalized);
-      console.log(res.data);
       setCartData(normalized);
     };
 
@@ -77,18 +72,15 @@ const CartPage = () => {
     );
   };
 
-
-
-
   // Remove item using both size and color
   const removeItem = async (id, size, color) => {
     await removeFromCart(id, size, color);
 
     setCartData((prev) =>
-    prev.filter(
-      (item) => !(item.id === id && item.size === size && item.color === color)
-    )
-  );
+      prev.filter(
+        (item) => !(item.id === id && item.size === size && item.color === color)
+      )
+    );
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -103,7 +95,7 @@ const CartPage = () => {
     deliveryCity: "",
     deliveryState: "",
     deliveryInstructions: "",
-    paymentType: "Cash",
+    paymentType: "UPI",
   });
 
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -129,52 +121,77 @@ const CartPage = () => {
   };
 
   const handleOrderSubmit = async () => {
-    const orderPayload = {
-      ...checkoutData,
-      productsBought: cartData.map((item) => ({
-        productID: item.id,
-        productName: item.name,
-        productCategory: item.category || "",
-        productColour: item.color || "",
-        size: item.size,
-        quantity: item.quantity,
-        price: item.price,
-        productDiscount: item.discount || 0,
-      })),
-      orderTotal: total,
-      paymentStatus: "pending",
-      orderStatus: "pending",
-    };
-
     try {
-      const res = await fetch(`${apiUrl}/user/order/newOrder`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderPayload),
+      // Step 1: Create Razorpay order on backend
+      const orderRes = await axios.post(`${apiUrl}/payment/create-order`, {
+        amount: total,
+        currency: "INR",
       });
 
-      const data = await res.json();
-      if (data.success) {
-        alert("Order placed successfully!");
-        clearCart();
-        setCartData([]);
-        setShowModal(false);
-      }
-      else {
-        alert("Order failed: " + data.message);
-      }
+      const { orderId, amount, currency } = orderRes.data;
+
+      // Step 2: Open Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amount,
+        currency: currency,
+        name: "FastTrade Sarees",
+        description: "Order Payment",
+        order_id: orderId,
+        handler: async function (response) {
+          try {
+            // Step 3: Verify payment
+            const verifyRes = await axios.post(`${apiUrl}/payment/verify-payment`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+              
+            if (verifyRes.data.success) {
+              // Step 4: Save order to DB
+              const orderPayload = {
+                ...checkoutData,
+                productsBought: cartData.map((item) => ({
+                  productID: item.id,
+                  productName: item.name,
+                  size: item.size,
+                  productColour: item.color,
+                  quantity: item.quantity,
+                  price: item.price,
+                })),
+                orderTotal: total,
+                paymentStatus: "paid",
+                orderStatus: "confirmed",
+              };
+              
+              await axios.post(`${apiUrl}/user/order/newOrder`, orderPayload);
+              alert("✅ Payment successful! Order placed successfully.");
+              clearCart();
+              setCartData([]);
+              setShowModal(false);
+            } else {
+              alert("❌ Payment verification failed!");
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Error verifying payment.");
+          }
+        },
+        theme: { color: "#0f172a" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      console.error("Order submit error:", err);
-      alert("Something went wrong.");
+      console.error("Payment init error:", err);
+      alert("Could not start payment process.");
     }
   };
-
   const subtotal = cartData.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
   // const tax = subtotal * 0.08;
   const total = subtotal;
 
@@ -490,7 +507,6 @@ const CartPage = () => {
                   onChange={handleInputChange}
                   className="w-full border rounded px-4 py-2"
                 >
-                  <option value="Cash">Cash on Delivery</option>
                   <option value="UPI">UPI</option>
                 </select>
               </div>

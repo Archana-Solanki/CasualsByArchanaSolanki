@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from "../assets/NewLogo1.png.jpg";
 
 
-const apiUrl = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api';
+const apiUrl = import.meta.env?.VITE_API_URL;
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -19,9 +19,6 @@ export default function ForgotPassword() {
     setStatus('loading');
 
     try {
-      // Simulate API call for demo
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       const response = await fetch(`${apiUrl}/user/forgot-password`, {
         method: 'POST',
         headers: {

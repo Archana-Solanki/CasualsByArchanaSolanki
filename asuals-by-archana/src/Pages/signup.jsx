@@ -3,7 +3,7 @@ import { User, Phone, Mail, Lock, Eye, EyeOff, MapPin, Zap } from 'lucide-react'
 import logo from "../assets/NewLogo1.png.jpg";
 import { useNavigate } from 'react-router-dom';
 
-const apiUrl = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api';
+const apiUrl = import.meta.env?.VITE_API_URL;
 
 export default function SignUpPage() {
 
@@ -118,7 +118,7 @@ export default function SignUpPage() {
 
     try {
       const response = await fetch(
-        `${apiUrl}/signup`,
+        `${apiUrl}/signup/new-signup`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

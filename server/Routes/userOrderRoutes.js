@@ -56,12 +56,6 @@ router.post("/newOrder", async (req, res) => {
       orderDate,
     } = req.body;
 
-    const generatedSignature = "test_signature";
-
-    if (razorpaySignature !== "test_signature") {
-      console.log("Skipping real signature check for testing...");
-    }
-
     for (const item of productsBought) {
       const product = await Product.findById(item.productID);
       if (!product) {
