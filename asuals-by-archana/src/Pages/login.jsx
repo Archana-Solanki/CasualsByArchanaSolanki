@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Phone, Lock, Eye, EyeOff, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/NewLogo1.jpg";
+import { toast } from 'react-toastify';
 
 
 const apiUrl = import.meta.env?.VITE_API_URL || 'http://localhost:3000/api';
@@ -42,14 +43,23 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        alert(data.message || "Login successful! 🎉");
-        navigate("/"); // redirect to home
+        toast.success('Login Successful!', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+        navigate("/");
       } else {
-        alert(data.message || "Unexpected response");
+        toast.error(data.message || "Unexpected response", {
+          position: 'top-right',
+          autoClose: 4000,
+        });
       }
     } catch (err) {
       const message = err.response?.data?.message || "Login failed. Please try again.";
-      alert(message);
+      toast.error(message, {
+        position: 'top-right',
+        autoClose: 4000,
+      });
     } finally {
       setIsLoading(false);
     }

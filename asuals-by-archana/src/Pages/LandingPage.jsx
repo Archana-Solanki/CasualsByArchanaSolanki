@@ -79,26 +79,26 @@ const LandingPage = () => {
       <Grid />
       <SignatureStyle />
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-extrabold font-display inline-block relative">
+        <h1 className="text-4xl font-extrabold font-display inline-block relative">
           Shop Womens's
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h2>
+        </h1>
       </div>
       <Carousel items={carouselProducts1} />
 
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-extrabold font-display inline-block relative">
+        <h1 className="text-4xl font-extrabold font-display inline-block relative">
           Shop Men's
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h2>
+        </h1>
       </div>
       <Carousel items={carouselProducts2} />
 
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-extrabold font-display inline-block relative">
+        <h1 className="text-4xl font-extrabold font-display inline-block relative">
           Shop Unisex
           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h2>
+        </h1>
       </div>
       <Carousel items={carouselProducts2} />
 

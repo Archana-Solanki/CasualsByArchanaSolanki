@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Phone, Mail, Lock, Eye, EyeOff, MapPin, Zap } from 'lucide-react';
 import logo from "../assets/NewLogo1.jpg";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const apiUrl = import.meta.env?.VITE_API_URL;
 
@@ -136,7 +137,10 @@ export default function SignUpPage() {
           setErrors({ general: json.message || "Signup failed. Please try again." });
         }
       } else {
-        alert("🎉 Signup successful!");
+        toast.success('Signup Successful!', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
         navigate('/login');
       }
     } catch (error) {
@@ -158,12 +162,12 @@ export default function SignUpPage() {
         <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-gray-200/50 relative overflow-hidden">
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-50/30 to-transparent pointer-events-none"></div>
-          
+
           <div className="relative z-10">
             {/* Company Logo and Name */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-28 h-20 mb-4 bg-white rounded-2xl transform hover:rotate-3 transition-transform duration-300">
-                <img src = {logo}/>
+                <img src={logo} />
               </div>
               <h1 className="text-4xl font-black text-black mb-2 tracking-tight">
                 Casuals
@@ -385,8 +389,8 @@ export default function SignUpPage() {
                 <span className="px-4 text-gray-500 text-sm font-medium">Already a member?</span>
                 <div className="flex-1 h-px bg-gray-300"></div>
               </div>
-              <a 
-                href="/login" 
+              <a
+                href="/login"
                 className="inline-flex items-center text-black font-bold hover:text-gray-700 transition-all duration-200 text-lg group"
               >
                 Log In

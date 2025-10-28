@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import axios from "axios";
 import { useCartActions } from "../Helper/CartHelper";
+import { toast } from 'react-toastify';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const CartPage = () => {
@@ -165,16 +166,25 @@ const CartPage = () => {
               };
 
               await axios.post(`${apiUrl}/user/order/newOrder`, orderPayload);
-              alert("✅ Payment successful! Order placed successfully.");
+              toast.success("Payment successful! Order placed successfully.", {
+                position: 'top-right',
+                autoClose: 4000,
+              });
               clearCart();
               setCartData([]);
               setShowModal(false);
             } else {
-              alert("❌ Payment verification failed!");
+              toast.error("Payment verification failed!", {
+                position: 'top-right',
+                autoClose: 4000
+              });
             }
           } catch (err) {
             console.error("Verification error:", err);
-            alert("Error verifying payment.");
+            toast.error("Error verifying payment", {
+              position: 'top-right',
+              autoClose: 3000,
+            });
           }
         },
         theme: { color: "#0f172a" },
@@ -184,7 +194,10 @@ const CartPage = () => {
       rzp.open();
     } catch (err) {
       console.error("Payment init error:", err);
-      alert("Could not start payment process.");
+      toast.error("Could not start payment process", {
+        position: 'top-right',
+        autoClose: 4000,
+      });
     }
   };
   const subtotal = cartData.reduce(

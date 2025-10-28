@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar";
+import { toast } from "react-toastify";
 const apiUrl = import.meta.env.VITE_API_URL;
 import {
   Package,
@@ -48,9 +49,15 @@ const OrdersPage = () => {
       } catch (err) {
         console.error("Failed to fetch orders:", err);
         if (err.response && err.response.status === 401) {
-          alert("Session expired. Please login again.");
+          toast.error('Session expired. PLease login again', {
+            position:'top-right',
+            autoClose: 5000
+          });
         } else {
-          alert("Failed to fetch orders. Please try again later.");
+          toast.error('Failed to fetch orders. Please try again later.', {
+            position:'top-right',
+            autoClose: 5000
+          });
         }
       } finally {
         setLoading(false);

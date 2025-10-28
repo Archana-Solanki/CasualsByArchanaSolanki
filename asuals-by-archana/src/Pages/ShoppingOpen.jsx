@@ -10,8 +10,9 @@ import {
   Minus,
 } from "lucide-react";
 import Navbar from "../Components/Navbar";
-import { useCart, useDispatchCart } from "../Components/ContextReducer";
 import { useCartActions } from "../Helper/CartHelper";
+import { toast } from 'react-toastify';
+
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -113,19 +114,31 @@ const ProductDetailPage = () => {
 
   const HandleAddToCart = async () => {
     if (!isLoggedIn) {
-      alert("Please log in to add items to your cart.");
+      toast.error("Please log in to add items to your cart.", {
+        position: 'top-right',
+        autoClose: 4000,
+      });
       return;
     }
     if (!selectedColor) {
-      alert("Please select a color before adding to cart.");
+      toast.error("Please select a color before adding to cart.", {
+        position: 'top-right',
+        autoClose: 4000,
+      });
       return;
     }
     if (!selectedSize) {
-      alert("Please select a size before adding to cart.");
+      toast.error("Please select a size before adding to cart.", {
+        position: 'top-right',
+        autoClose: 4000,
+      });
       return;
     }
     if (isSizeOutOfStock(selectedColor, selectedSize, quantity)) {
-      alert("Selected size is out of stock.");
+      toast.error("Selected size is out of stock.", {
+        position: 'top-right',
+        autoClose: 4000,
+      });
       return;
     }
     const existingItem = cartData.find(
@@ -133,16 +146,23 @@ const ProductDetailPage = () => {
         cartItem.id === product._id && cartItem.size === selectedSize && cartItem.color === selectedColor
     );
     if (existingItem) {
-      await updateCartItem(product._id, quantity, selectedColor, selectedSize)
-      alert("🛒 Cart updated!\n\nWe've adjusted the quantity for this item.");
+      await updateCartItem(product._id, quantity, selectedColor, selectedSize);
+      toast.success("🛒 Cart updated!\n\nWe've adjusted the quantity for this item.", {
+        position: 'top-right',
+        autoClose: 3000,
+      });
     } else {
       await addToCart({
         productID: product._id,
         productQuantity: quantity,
         productColor: selectedColor,
         productSize: selectedSize
-      })
-      alert("🎉 Added to Cart!\n\nYour item has been successfully added.");
+      });
+
+      toast.success("Added to Cart!\n\nYour item has been successfully added.", {
+        position: 'top-right',
+        autoClose: 3000,
+      });
     }
   };
 

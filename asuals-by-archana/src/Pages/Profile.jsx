@@ -52,9 +52,15 @@ const ProfilePage = () => {
       } catch (err) {
         console.error("Failed to fetch profile:", err);
         if (err.response && err.response.status === 401) {
-          alert("Session expired. Please login again.");
+          toast.error('Session expired. PLease login again', {
+            position: 'top-right',
+            autoClose: 5000
+          });
         } else {
-          alert("Failed to fetch profile. Please try again later.");
+          toast.error('Failed to fetch orders. Please try again later.', {
+            position: 'top-right',
+            autoClose: 5000
+          });
         }
       }
     };
