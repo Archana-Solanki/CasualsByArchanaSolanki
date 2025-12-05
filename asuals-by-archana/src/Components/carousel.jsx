@@ -5,13 +5,13 @@ const slides = [
     id: 1,
     // YouTube video #1
     src: "https://www.youtube.com/embed/XjrvfmqosLs?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&loop=1&playlist=XjrvfmqosLs",
-    duration: 21000,
+    duration: 18000,
   },
   {
     id: 2,
     // YouTube video #2
     src: "https://www.youtube.com/embed/fUVgpQHwOKk?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&loop=1&playlist=fUVgpQHwOKk",
-    duration: 17000,
+    duration: 18000,
   },
 ];
 
@@ -29,7 +29,7 @@ export default function CustomCarousel() {
   }, [current]);
 
   return (
-    <div className="relative w-[80%] max-w-[1440px] h-[70vh] sm:h-[80vh] lg:h-[85vh] mx-auto overflow-hidden rounded-xl shadow-lg mt-28 bg-black">
+    <div className="relative w-[75%] max-w-[1440px] h-[50vh] lg:h-[70vh] aspect-video mx-auto overflow-hidden rounded-xl shadow-lg mt-28 bg-black">
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}

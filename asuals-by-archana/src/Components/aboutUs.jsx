@@ -40,11 +40,11 @@ const AboutDesigner = () => {
 
       {/* Image Content (30%) */}
       <div className="w-full md:w-[30%] mr-28 hidden md:block">
-        <div className="relative overflow-hidden rounded-2xl  group">
+        <div className="relative overflow-hidden rounded-2xl group">
           <img
             src={logo}
             alt="Designer"
-            className="w-full h-[28rem] object-cover transform group-hover:scale-105 transition duration-700 ease-in-out"
+            className="w-full h-[28rem] object-contain transform group-hover:scale-105 transition duration-700 ease-in-out"
           />
           <div className="absolute inset-0 rounded-2xl  transition duration-700"></div>
         </div>

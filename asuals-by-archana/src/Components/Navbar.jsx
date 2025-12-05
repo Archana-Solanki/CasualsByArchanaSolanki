@@ -12,7 +12,7 @@ export default function Navbar() {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("top");
   const location = useLocation();
   const navigate = useNavigate();
   const profileDropdownRef = useRef(null);
@@ -53,6 +53,7 @@ export default function Navbar() {
 
     fetchProfile();
   }, []);
+
   useEffect(() => {
     if (location.pathname === "/" && location.state?.scrollTo) {
       setActiveSection(location.state.scrollTo);
@@ -98,7 +99,7 @@ export default function Navbar() {
       scroller.scrollTo(scrollToId, {
         duration: 500,
         smooth: true,
-        offset: -70,
+        offset: -100,
       });
       setActiveSection(scrollToId);
     } else {
@@ -242,7 +243,6 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Navigation Links */}
         {/* Navigation Links */}
         <div
           className={`${menuOpen ? "block" : "hidden"} 

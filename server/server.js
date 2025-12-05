@@ -26,6 +26,7 @@ const morgan = require('morgan');
 const allowedOrigins = [
   "http://localhost:5173",
   "https://casualsbyarchanasolanki.vercel.app",
+  "https://casualsbyarchanasolanki.in",
 ];
 
 app.use(
