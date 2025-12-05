@@ -27,6 +27,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://casualsbyarchanasolanki.vercel.app",
   "https://casualsbyarchanasolanki.in",
+  "https://www.casualsbyarchanasolanki.in",
 ];
 
 app.use(
