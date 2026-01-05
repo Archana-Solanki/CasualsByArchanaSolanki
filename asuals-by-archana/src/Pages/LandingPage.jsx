@@ -3,7 +3,6 @@ import MainCarousel from "../Components/carousel";
 import SignatureStyle from "../Components/signatureStyle";
 import AboutUs from "../Components/aboutUs";
 import banner1 from "../assets/LandingBanner1.jpg";
-import banner2 from "../assets/LandingBanner2.jpg";
 import Navbar from "../Components/Navbar";
 import Carousel from "../Components/productCarousel";
 import Contact from "../Components/contactFaq";
@@ -12,6 +11,7 @@ import Footer from "../Components/Footer";
 import Grid from "../Components/FashionGallery";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { scroller } from "react-scroll";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const LandingPage = () => {
@@ -19,6 +19,19 @@ const LandingPage = () => {
   const [carouselProducts2, setCarouselProducts2] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  /* =========================
+     SEO: Page-level H1 (invisible)
+     ========================= */
+  const SeoH1 = () => (
+    <section className="sr-only">
+      <h1>Casual Clothing Store by Archana Solanki</h1>
+      <p>
+        Casuals by Archana Solanki is a modern fashion brand offering women’s,
+        men’s, and unisex casual wear with contemporary designs and everyday comfort.
+      </p>
+    </section>
+  );
 
   useEffect(() => {
     if (location.state?.scrollTo) {
@@ -28,7 +41,6 @@ const LandingPage = () => {
           smooth: true,
           offset: -70,
         });
-
         navigate(location.pathname, { replace: true, state: {} });
       }, 300);
     }
@@ -39,31 +51,31 @@ const LandingPage = () => {
       try {
         const res1 = await fetch(`${apiUrl}/display/home-female-products`);
         const data1 = await res1.json();
-        const mapped1 = Array.isArray(data1)
-          ? data1.map((p) => ({
-              id: p._id || p.id,
-              name: p.productName || p.name,
-              price: p.productCost || p.price,
-              image: (p.productImages && p.productImages[0]) || p.image,
-            }))
-          : [];
-        setCarouselProducts1(mapped1);
+        setCarouselProducts1(
+          Array.isArray(data1)
+            ? data1.map((p) => ({
+                id: p._id || p.id,
+                name: p.productName || p.name,
+                price: p.productCost || p.price,
+                image: p.productImages?.[0] || p.image,
+              }))
+            : []
+        );
 
         const res2 = await fetch(`${apiUrl}/display/home-male-products`);
         const data2 = await res2.json();
-        const mapped2 = Array.isArray(data2)
-          ? data2.map((p) => ({
-              id: p._id || p.id,
-              name: p.productName || p.name,
-              price: p.productCost || p.price,
-              image: (p.productImages && p.productImages[0]) || p.image,
-            }))
-          : [];
-        setCarouselProducts2(mapped2);
+        setCarouselProducts2(
+          Array.isArray(data2)
+            ? data2.map((p) => ({
+                id: p._id || p.id,
+                name: p.productName || p.name,
+                price: p.productCost || p.price,
+                image: p.productImages?.[0] || p.image,
+              }))
+            : []
+        );
       } catch (err) {
         console.error("Failed to fetch products", err);
-        setCarouselProducts1([]);
-        setCarouselProducts2([]);
       }
     }
 
@@ -72,58 +84,111 @@ const LandingPage = () => {
 
   return (
     <>
+      <SeoH1 />
+
       <div id="top">
         <Navbar />
       </div>
-      <MainCarousel />
-      <Grid />
-      <SignatureStyle />
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-extrabold font-display inline-block relative">
-          Shop Womens's
-          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h1>
-      </div>
-      <Carousel items={carouselProducts1} />
 
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-extrabold font-display inline-block relative">
-          Shop Men's
-          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h1>
-      </div>
-      <Carousel items={carouselProducts2} />
+      <main>
+        <section aria-label="Featured banners">
+          <MainCarousel />
+        </section>
 
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-extrabold font-display inline-block relative">
-          Shop Unisex
-          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-black rounded-full animate-pulse"></span>
-        </h1>
-      </div>
-      <Carousel items={carouselProducts2} />
+        <section aria-label="Fashion gallery">
+          <Grid />
+        </section>
 
-      {/* <img
-        src={banner2}
-        alt="Banner 2"
-        className="w-[80%] mx-auto object-contain rounded-md mb-4 cursor-pointer"
-      /> */}
+        <section aria-label="Signature styles">
+          <SignatureStyle />
+        </section>
 
-      <div id="about-us">
-        <AboutUs />
-      </div>
+        {/* =========================
+            WOMENS
+           ========================= */}
+        <section aria-labelledby="womens-heading">
+          <div className="text-center mb-16">
+            <h2
+              id="womens-heading"
+              className="text-4xl font-extrabold font-display inline-block relative"
+            >
+              Shop Women’s
+            </h2>
+          </div>
+          <Carousel items={carouselProducts1} />
+        </section>
 
-      <Link to="/shop">
-        <img
-          src={banner1}
-          alt="Banner 1"
-          className="w-[80%]  mx-auto object-contain rounded-2xl"
-        />
-      </Link>
+        {/* =========================
+            MENS
+           ========================= */}
+        <section aria-labelledby="mens-heading">
+          <div className="text-center mb-16">
+            <h2
+              id="mens-heading"
+              className="text-4xl font-extrabold font-display inline-block relative"
+            >
+              Shop Men’s
+            </h2>
+          </div>
+          <Carousel items={carouselProducts2} />
+        </section>
 
-      <GoogleReviewsCarousel />
-      <div id="contact">
-        <Contact />
-      </div>
+        {/* =========================
+            UNISEX
+           ========================= */}
+        <section aria-labelledby="unisex-heading">
+          <div className="text-center mb-16">
+            <h2
+              id="unisex-heading"
+              className="text-4xl font-extrabold font-display inline-block relative"
+            >
+              Shop Unisex
+            </h2>
+          </div>
+          <Carousel items={carouselProducts2} />
+        </section>
+
+        <section id="about-us">
+          <AboutUs />
+        </section>
+
+        <section aria-label="Shop banner">
+          <Link to="/shop">
+            <img
+              src={banner1}
+              alt="Explore casual fashion collections by Archana Solanki"
+              className="w-[80%] mx-auto object-contain rounded-2xl"
+            />
+          </Link>
+        </section>
+
+        <section aria-label="Customer reviews">
+          <GoogleReviewsCarousel />
+        </section>
+
+        <section id="contact">
+          <Contact />
+        </section>
+
+        {/* =========================
+            SEO FOOTER (minimal)
+           ========================= */}
+        <section className="max-w-6xl mx-auto px-6 py-12 text-sm text-neutral-500">
+          <p>
+            Discover curated casual wear collections for women, men, and unisex
+            fashion at Casuals by Archana Solanki. Explore everyday essentials,
+            modern silhouettes, and thoughtfully designed apparel crafted for
+            comfort and versatility.
+          </p>
+
+          <nav className="sr-only">
+            <Link to="/shop">Shop</Link>
+            <Link to="/about">About</Link>
+            <Link to="/contact">Contact</Link>
+          </nav>
+        </section>
+      </main>
+
       <Footer />
     </>
   );

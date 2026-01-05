@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import Navbar from "../Components/Navbar";
 import { ChevronDown, ChevronUp, Shield, Eye, Lock, Database, Users, Globe, Scale, Mail, Phone, MapPin } from "lucide-react";
 
@@ -111,230 +112,236 @@ export default function PrivacyPolicy() {
 
   return (
     <>
-    <Navbar/>
-    <div className="min-h-screen bg-white text-black pt-24">
-      {/* Header */}
-      <div className="bg-black text-white">
+      <Navbar />
+      <Helmet>
+        <title>Privacy Policy | Casuals by Archana Solanki</title>
+        <meta
+          name="description"
+          content="Learn how Casuals by Archana Solanki collects, uses, stores, and protects your personal information. Our Privacy Policy explains your rights and data security practices."
+        />
+      </Helmet>
+      <main className="min-h-screen bg-white text-black pt-24">
+        {/* Header */}
+        <div className="bg-black text-white">
+          <div className="max-w-4xl mx-auto px-6 py-16">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-white text-black rounded-full mb-6">
+                <Shield className="w-10 h-10" />
+              </div>
+              <h1 className="text-5xl md:text-6xl font-light tracking-wide mb-4">
+                PRIVACY POLICY
+              </h1>
+              <div className="w-24 h-px bg-white mx-auto mb-6"></div>
+              <p className="text-lg font-light tracking-wider opacity-90">
+                CASUALS BY ARCHANA SOLANKI
+              </p>
+              <p className="text-sm font-light opacity-70 mt-2">
+                Your privacy is our priority
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Introduction */}
         <div className="max-w-4xl mx-auto px-6 py-16">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white text-black rounded-full mb-6">
-              <Shield className="w-10 h-10" />
+          <div className="prose prose-lg max-w-none mb-12">
+            <div className="bg-gray-50 p-8 border-l-4 border-black">
+              <p className="text-lg leading-relaxed font-light mb-4">
+                We are committed to protecting and respecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website <strong>casualsbyarchanasolanki.in</strong>.
+              </p>
+              <p className="text-base leading-relaxed font-light opacity-80">
+                By using our website, you consent to the data practices described in this policy. Please take the time to read this policy carefully to understand how we handle your information.
+              </p>
             </div>
-            <h1 className="text-5xl md:text-6xl font-light tracking-wide mb-4">
-              PRIVACY POLICY
-            </h1>
-            <div className="w-24 h-px bg-white mx-auto mb-6"></div>
-            <p className="text-lg font-light tracking-wider opacity-90">
-              CASUALS BY ARCHANA SOLANKI
-            </p>
-            <p className="text-sm font-light opacity-70 mt-2">
-              Your privacy is our priority
-            </p>
           </div>
-        </div>
-      </div>
 
-      {/* Introduction */}
-      <div className="max-w-4xl mx-auto px-6 py-16">
-        <div className="prose prose-lg max-w-none mb-12">
-          <div className="bg-gray-50 p-8 border-l-4 border-black">
-            <p className="text-lg leading-relaxed font-light mb-4">
-              We are committed to protecting and respecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit our website <strong>casualsbyarchanasolanki.in</strong>.
-            </p>
-            <p className="text-base leading-relaxed font-light opacity-80">
-              By using our website, you consent to the data practices described in this policy. Please take the time to read this policy carefully to understand how we handle your information.
-            </p>
+          {/* Privacy at a Glance */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Secure Collection</h3>
+              <p className="text-gray-600 font-light">SSL encryption protects your data</p>
+            </div>
+            <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-6 h-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Transparent Usage</h3>
+              <p className="text-gray-600 font-light">Clear purpose for data collection</p>
+            </div>
+            <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Your Control</h3>
+              <p className="text-gray-600 font-light">Withdraw consent anytime</p>
+            </div>
           </div>
-        </div>
 
-        {/* Privacy at a Glance */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
-            <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h3 className="font-medium text-lg mb-2">Secure Collection</h3>
-            <p className="text-gray-600 font-light">SSL encryption protects your data</p>
-          </div>
-          <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
-            <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
-              <Eye className="w-6 h-6" />
-            </div>
-            <h3 className="font-medium text-lg mb-2">Transparent Usage</h3>
-            <p className="text-gray-600 font-light">Clear purpose for data collection</p>
-          </div>
-          <div className="bg-white border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow duration-300">
-            <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6" />
-            </div>
-            <h3 className="font-medium text-lg mb-2">Your Control</h3>
-            <p className="text-gray-600 font-light">Withdraw consent anytime</p>
-          </div>
-        </div>
-
-        {/* Expandable Sections */}
-        <div className="space-y-4">
-          {sections.map((section, index) => (
-            <div key={index} className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
-              <button
-                onClick={() => toggleSection(index)}
-                className="w-full px-8 py-6 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-inset"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="p-2 bg-black text-white">
-                    {section.icon}
+          {/* Expandable Sections */}
+          <div className="space-y-4">
+            {sections.map((section, index) => (
+              <div key={index} className="border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+                <button
+                  onClick={() => toggleSection(index)}
+                  className="w-full px-8 py-6 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-inset"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-black text-white">
+                      {section.icon}
+                    </div>
+                    <h3 className="text-xl font-light tracking-wide text-left">
+                      SECTION {String.fromCharCode(65 + index)} - {section.title.toUpperCase()}
+                    </h3>
                   </div>
-                  <h3 className="text-xl font-light tracking-wide text-left">
-                    SECTION {String.fromCharCode(65 + index)} - {section.title.toUpperCase()}
-                  </h3>
-                </div>
-                <div className="flex-shrink-0">
-                  {openSection === index ? (
-                    <ChevronUp className="w-6 h-6 text-gray-600" />
-                  ) : (
-                    <ChevronDown className="w-6 h-6 text-gray-600" />
-                  )}
-                </div>
-              </button>
-              
-              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                openSection === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-              }`}>
-                <div className="px-8 pb-8">
-                  <div className="pl-12 space-y-4">
-                    {section.content.map((paragraph, pIndex) => (
-                      <div key={pIndex}>
-                        {paragraph.startsWith('NOTE:') ? (
-                          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 my-4">
-                            <p className="text-blue-800 font-medium text-sm">
+                  <div className="flex-shrink-0">
+                    {openSection === index ? (
+                      <ChevronUp className="w-6 h-6 text-gray-600" />
+                    ) : (
+                      <ChevronDown className="w-6 h-6 text-gray-600" />
+                    )}
+                  </div>
+                </button>
+
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openSection === index ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                  }`}>
+                  <div className="px-8 pb-8">
+                    <div className="pl-12 space-y-4">
+                      {section.content.map((paragraph, pIndex) => (
+                        <div key={pIndex}>
+                          {paragraph.startsWith('NOTE:') ? (
+                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 my-4">
+                              <p className="text-blue-800 font-medium text-sm">
+                                {paragraph}
+                              </p>
+                            </div>
+                          ) : paragraph.startsWith('•') ? (
+                            <div className="flex items-start space-x-3">
+                              <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                              <p className="text-gray-700 leading-relaxed font-light">
+                                {paragraph.substring(2)}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-gray-700 leading-relaxed font-light">
                               {paragraph}
                             </p>
-                          </div>
-                        ) : paragraph.startsWith('•') ? (
-                          <div className="flex items-start space-x-3">
-                            <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
-                            <p className="text-gray-700 leading-relaxed font-light">
-                              {paragraph.substring(2)}
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="text-gray-700 leading-relaxed font-light">
-                            {paragraph}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Data Types We Collect */}
-        <div className="mt-16 bg-black text-white p-8">
-          <h3 className="text-2xl font-light tracking-wide text-center mb-8">INFORMATION WE COLLECT</h3>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="text-lg font-medium mb-4 flex items-center">
-                <Database className="w-5 h-5 mr-2" />
-                Personal Information
-              </h4>
-              <ul className="space-y-2 text-sm font-light opacity-90">
-                <li>• Full Name</li>
-                <li>• Contact Number</li>
-                <li>• Email Address</li>
-                <li>• Billing & Shipping Address</li>
-                <li>• Bank Account Details</li>
+          {/* Data Types We Collect */}
+          <div className="mt-16 bg-black text-white p-8">
+            <h3 className="text-2xl font-light tracking-wide text-center mb-8">INFORMATION WE COLLECT</h3>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="text-lg font-medium mb-4 flex items-center">
+                  <Database className="w-5 h-5 mr-2" />
+                  Personal Information
+                </h4>
+                <ul className="space-y-2 text-sm font-light opacity-90">
+                  <li>• Full Name</li>
+                  <li>• Contact Number</li>
+                  <li>• Email Address</li>
+                  <li>• Billing & Shipping Address</li>
+                  <li>• Bank Account Details</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-medium mb-4 flex items-center">
+                  <Eye className="w-5 h-5 mr-2" />
+                  Automatic Information
+                </h4>
+                <ul className="space-y-2 text-sm font-light opacity-90">
+                  <li>• Browser Information</li>
+                  <li>• IP Address</li>
+                  <li>• URL Navigation</li>
+                  <li>• Location Data</li>
+                  <li>• Site Activity</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Security Measures */}
+          <div className="mt-16 grid md:grid-cols-2 gap-8">
+            <div className="bg-green-50 border border-green-200 p-6">
+              <div className="flex items-center mb-4">
+                <Lock className="w-6 h-6 text-green-600 mr-3" />
+                <h4 className="text-lg font-medium text-green-800">Security Measures</h4>
+              </div>
+              <ul className="space-y-2 text-green-700 font-light">
+                <li>• SSL encryption for data transmission</li>
+                <li>• Secure server infrastructure</li>
+                <li>• Access controls for employees</li>
+                <li>• Regular security audits</li>
               </ul>
             </div>
-            
-            <div>
-              <h4 className="text-lg font-medium mb-4 flex items-center">
-                <Eye className="w-5 h-5 mr-2" />
-                Automatic Information
-              </h4>
-              <ul className="space-y-2 text-sm font-light opacity-90">
-                <li>• Browser Information</li>
-                <li>• IP Address</li>
-                <li>• URL Navigation</li>
-                <li>• Location Data</li>
-                <li>• Site Activity</li>
+
+            <div className="bg-blue-50 border border-blue-200 p-6">
+              <div className="flex items-center mb-4">
+                <Shield className="w-6 h-6 text-blue-600 mr-3" />
+                <h4 className="text-lg font-medium text-blue-800">Your Rights</h4>
+              </div>
+              <ul className="space-y-2 text-blue-700 font-light">
+                <li>• Access your personal data</li>
+                <li>• Withdraw consent anytime</li>
+                <li>• Request data correction</li>
+                <li>• Control marketing communications</li>
               </ul>
             </div>
           </div>
-        </div>
 
-        {/* Security Measures */}
-        <div className="mt-16 grid md:grid-cols-2 gap-8">
-          <div className="bg-green-50 border border-green-200 p-6">
-            <div className="flex items-center mb-4">
-              <Lock className="w-6 h-6 text-green-600 mr-3" />
-              <h4 className="text-lg font-medium text-green-800">Security Measures</h4>
-            </div>
-            <ul className="space-y-2 text-green-700 font-light">
-              <li>• SSL encryption for data transmission</li>
-              <li>• Secure server infrastructure</li>
-              <li>• Access controls for employees</li>
-              <li>• Regular security audits</li>
-            </ul>
-          </div>
-          
-          <div className="bg-blue-50 border border-blue-200 p-6">
-            <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-blue-600 mr-3" />
-              <h4 className="text-lg font-medium text-blue-800">Your Rights</h4>
-            </div>
-            <ul className="space-y-2 text-blue-700 font-light">
-              <li>• Access your personal data</li>
-              <li>• Withdraw consent anytime</li>
-              <li>• Request data correction</li>
-              <li>• Control marketing communications</li>
-            </ul>
-          </div>
-        </div>
+          {/* Contact Information */}
+          <div className="mt-16 bg-white border-2 border-black p-8">
+            <h3 className="text-3xl font-light tracking-wide text-center mb-8">QUESTIONS? CONTACT US</h3>
 
-        {/* Contact Information */}
-        <div className="mt-16 bg-white border-2 border-black p-8">
-          <h3 className="text-3xl font-light tracking-wide text-center mb-8">QUESTIONS? CONTACT US</h3>
-          
-          <div className="text-center space-y-4">
-            <p className="text-lg font-light mb-6">
-              In case you have any questions/queries about this Privacy Policy, please contact:
+            <div className="text-center space-y-4">
+              <p className="text-lg font-light mb-6">
+                In case you have any questions/queries about this Privacy Policy, please contact:
+              </p>
+
+              <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+                <div className="flex items-center space-x-3">
+                  <Mail className="w-5 h-5" />
+                  <span className="font-light">casualsbyarchanasolanki@gmail.com</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Phone className="w-5 h-5" />
+                  <span className="font-light">+91 8788292204</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex items-center justify-center space-x-3">
+                  <MapPin className="w-5 h-5" />
+                  <span className="font-light">Governed by Laws of India | Jurisdiction: Pune, Maharashtra</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-16 text-center py-8 border-t border-gray-200">
+            <p className="text-sm font-light opacity-70 mb-2">
+              © 2024 Casuals by Archana Solanki. All rights reserved.
             </p>
-            
-            <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
-              <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5" />
-                <span className="font-light">casualsbyarchanasolanki@gmail.com</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5" />
-                <span className="font-light">+91 8788292204</span>
-              </div>
-            </div>
-            
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-center space-x-3">
-                <MapPin className="w-5 h-5" />
-                <span className="font-light">Governed by Laws of India | Jurisdiction: Pune, Maharashtra</span>
-              </div>
-            </div>
+            <p className="text-xs font-light opacity-50">
+              This Privacy Policy is subject to change. Please review periodically for updates.
+            </p>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="mt-16 text-center py-8 border-t border-gray-200">
-          <p className="text-sm font-light opacity-70 mb-2">
-            © 2024 Casuals by Archana Solanki. All rights reserved.
-          </p>
-          <p className="text-xs font-light opacity-50">
-            This Privacy Policy is subject to change. Please review periodically for updates.
-          </p>
-        </div>
-      </div>
-    </div>
+      </main>
     </>
   );
 }

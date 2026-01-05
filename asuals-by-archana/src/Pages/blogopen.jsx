@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { Calendar, User, Clock } from "lucide-react";
 import Navbar from "../Components/Navbar";
 import axios from "axios";
@@ -43,14 +44,34 @@ const BlogDetailPage = () => {
 
   return (
     <>
-    <Navbar />
-      <div className="min-h-screen bg-white">
+      <Navbar />
+      <Helmet>
+        <title>{blog.blogHeading} | Fashion Journal</title>
+
+        <meta
+          name="description"
+          content={
+            blog.blogSubheading1
+              ? blog.blogSubheading1.slice(0, 155)
+              : blog.para1Content?.slice(0, 155)
+          }
+        />
+
+        <link
+          rel="canonical"
+          href={`https://yourdomain.com/blog/${blog.blogHeading
+            .toLowerCase()
+            .replace(/ /g, "-")
+            .replace(/[^\w-]+/g, "")}`}
+        />
+      </Helmet>
+      <main className="min-h-screen bg-white">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/20 z-10" />
           <img
             src={blog.image1}
-            alt={blog.blogHeading}
+            alt={`${blog.blogHeading} supporting visual`}
             className="w-full h-[70vh] object-cover filter grayscale transition-transform duration-1000"
           />
         </div>
@@ -65,7 +86,7 @@ const BlogDetailPage = () => {
               <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed font-light">
                 {blog.blogSubheading1}
               </p>
-              
+
               {/* Enhanced Meta Section */}
               <div className="flex items-center justify-between py-6 border-t border-gray-100 flex-wrap gap-4">
                 <div className="flex items-center space-x-8 flex-wrap gap-4">
@@ -78,10 +99,10 @@ const BlogDetailPage = () => {
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Calendar className="w-4 h-4" />
                     <span className="text-sm">
-                      {new Date(blog.date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      {new Date(blog.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                       })}
                     </span>
                   </div>
@@ -121,9 +142,9 @@ const BlogDetailPage = () => {
 
               {blog.image2 && (
                 <div className="my-12 group">
-                  <img 
-                    src={blog.image2} 
-                    alt="second blog visual" 
+                  <img
+                    src={blog.image2}
+                    alt="second blog visual"
                     className="w-full h-80 object-cover rounded-2xl shadow-2xl filter grayscale group-hover:scale-[1.02] transition-transform duration-500"
                   />
                 </div>
@@ -141,7 +162,7 @@ const BlogDetailPage = () => {
             </div>
           </div>
         </article>
-      </div>
+      </main>
     </>
   );
 };

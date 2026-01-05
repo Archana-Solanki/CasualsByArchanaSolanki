@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/shop</loc>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/blogs</loc>
+    <priority>0.8</priority>
+  </url>
+
+
+  <!-- Trust / policy pages -->
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/privacy</loc>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/terms</loc>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://casualsbyarchanasolanki.in/exchange</loc>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

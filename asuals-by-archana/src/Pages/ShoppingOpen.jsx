@@ -12,6 +12,7 @@ import {
 import Navbar from "../Components/Navbar";
 import { useCartActions } from "../Helper/CartHelper";
 import { toast } from 'react-toastify';
+import { Helmet } from "react-helmet";
 
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -169,7 +170,28 @@ const ProductDetailPage = () => {
   return (
     <>
       <Navbar />
-      <div className="max-h-[650px] bg-white relative top-24">
+
+      <Helmet>
+        <title>
+          {product.productName} | Casuals by Archana Solanki
+        </title>
+
+        <meta
+          name="description"
+          content={
+            product.productDescription
+              ? product.productDescription.slice(0, 155)
+              : `Buy ${product.productName} online. Explore price, sizes, colors, and availability.`
+          }
+        />
+
+        <link
+          rel="canonical"
+          href={`https://casualsbyarchanasolanki.in/product/${fullId}`}
+        />
+      </Helmet>
+
+      <main className="max-h-[650px] bg-white relative top-24">
         <div className="flex flex-col lg:flex-row">
           {/* Left - Images */}
           <div className="lg:w-1/2 lg:h-[680px] lg:sticky lg:top-0 bg-gray-50 pt-4 border-">
@@ -177,7 +199,7 @@ const ProductDetailPage = () => {
               <div className="relative h-full overflow-hidden">
                 <img
                   src={productImages[currentImage]}
-                  alt="Product"
+                  alt={`${product.productName} - ${selectedColor || "default color"} casual wear`}
                   className="w-full h-full object-contain"
                 />
                 <button
@@ -210,7 +232,7 @@ const ProductDetailPage = () => {
                   >
                     <img
                       src={img}
-                      alt={`Thumb ${index + 1}`}
+                      alt={`${product.productName} thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -250,6 +272,13 @@ const ProductDetailPage = () => {
                 <p className="text-gray-700 leading-relaxed">
                   {product.productDescription}
                 </p>
+                <section className="sr-only">
+                  <h2>Product Details</h2>
+                  <p>
+                    {product.productName} is available in multiple sizes and colors.
+                    Check availability, pricing, and delivery details before purchase.
+                  </p>
+                </section>
               </div>
 
               {/* Color & Size (new schema) */}
@@ -369,7 +398,7 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 };

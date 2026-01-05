@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import axios from 'axios';
 import { Search, Filter, Heart, Star, Grid, List, X, ChevronDown } from 'lucide-react';
 import Navbar from "../Components/Navbar";
+import { Helmet } from "react-helmet";
 import { useNavigate } from 'react-router-dom';
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -289,8 +290,24 @@ const ProductListing = () => {
   return (
     <>
       <Navbar />
+      <Helmet>
+        <title>Shop Casual Clothing Online | Casuals by Archana Solanki</title>
+        <meta
+          name="description"
+          content="Browse casual clothing for women, men, and unisex styles. Explore modern designs, everyday wear, and premium fashion at Casuals by Archana Solanki."
+        />
+      </Helmet>
 
-      <div className="min-h-screen bg-gray-50 mt-24">
+      <section className="sr-only">
+        <h1>Shop Casual Clothing for Women, Men & Unisex</h1>
+        <p>
+          Explore a curated collection of casual wear including women’s, men’s, and
+          unisex clothing. Filter by category, gender, and price to find everyday
+          fashion designed for comfort and style.
+        </p>
+      </section>
+
+      <main className="min-h-screen bg-gray-50 mt-24">
         {/* Header with Search */}
         <div className="bg-white border-b border-gray-200 sticky top-24 z-20 shadow-sm">
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -552,7 +569,22 @@ const ProductListing = () => {
             </main>
           </div>
         </div>
-      </div>
+
+        <section className="max-w-7xl mx-auto px-6 py-12 text-sm text-gray-500">
+          <p>
+            Discover casual clothing collections crafted for everyday wear. Shop
+            women’s, men’s, and unisex apparel featuring modern silhouettes, premium
+            fabrics, and versatile designs suitable for daily fashion needs.
+          </p>
+
+          {/* Internal links for crawlers */}
+          <nav className="sr-only">
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <a href="/contact">Contact</a>
+          </nav>
+        </section>
+      </main>
     </>
   );
 };

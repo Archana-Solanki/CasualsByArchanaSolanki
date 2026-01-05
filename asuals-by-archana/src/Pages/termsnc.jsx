@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import Navbar from "../Components/Navbar";
 import {
     ChevronDown,
@@ -178,13 +179,21 @@ export default function TermsConditions() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-white text-black pt-24">
+            <Helmet>
+                <title>Terms of Service | Casuals by Archana Solanki</title>
+                <meta
+                    name="description"
+                    content="Read the Terms of Service governing the use of the Casuals by Archana Solanki website, products, services, payments, and user responsibilities."
+                />
+            </Helmet>
+
+            <main className="min-h-screen bg-white text-black pt-24">
                 {/* Header */}
                 <div className="bg-black text-white">
                     <div className="max-w-4xl mx-auto px-6 py-16">
                         <div className="text-center">
                             <div className="inline-flex items-center justify-center w-20 h-20 bg-white text-black rounded-full mb-6">
-                                <FileText className="w-10 h-10" /> 
+                                <FileText className="w-10 h-10" />
                             </div>
                             <h1 className="text-5xl md:text-6xl font-light tracking-wide mb-4">
                                 TERMS OF SERVICE
@@ -334,7 +343,7 @@ export default function TermsConditions() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </>
     );
 }
