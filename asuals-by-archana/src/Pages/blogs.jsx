@@ -324,15 +324,6 @@ const BlogPage = () => {
                         </div>
                     )}
                 </main>
-
-                {/* API Connection Note */}
-                <div className="bg-blue-50 border-t border-blue-100 py-4">
-                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <p className="text-center text-blue-700 text-sm">
-                            <span className="font-medium">API Endpoint:</span> This page connects to <code>/api/blogs</code> for blog data
-                        </p>
-                    </div>
-                </div>
             </div>
         </>
     );

@@ -216,7 +216,9 @@ const CMSDashboard = () => {
       }
     } catch (error) {
       console.error("Error adding category:", error);
-      alert("Something went wrong while adding the category.");
+      // Display the server error message if available
+      const errorMessage = error.response?.data?.message || "Something went wrong while adding the category.";
+      alert(errorMessage);
     }
   };
 
@@ -1851,16 +1853,6 @@ const CMSDashboard = () => {
           </div>
         </div>
       )}
-
-      {/* API Endpoint Note */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Note:</strong> Blog posts are submitted to <code className="bg-blue-100 px-2 py-1 rounded">/api/blogs</code>. 
-            Make sure your backend server is running and the route is properly configured.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
