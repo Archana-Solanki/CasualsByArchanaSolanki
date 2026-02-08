@@ -4,6 +4,7 @@ import { Calendar, User, ArrowRight, Tag, Clock } from 'lucide-react';
 // Note: You'll need to import useNavigate from react-router-dom in your actual implementation
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../Components/Navbar";
+import Footer from '../Components/Footer';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const BlogPage = () => {
@@ -325,6 +326,7 @@ const BlogPage = () => {
                     )}
                 </main>
             </div>
+            <Footer />
         </>
     );
 };

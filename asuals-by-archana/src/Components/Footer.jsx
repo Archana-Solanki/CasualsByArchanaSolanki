@@ -109,18 +109,17 @@ export default function Footer() {
               <p className="text-gray-400 text-sm">
                 Developed by{" "}
                 <a
-                  href="https://radigitalsolution.com"
+                  href="https://ikrastudio.in"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-gray-300 transition-colors duration-300 font-medium hover:underline"
                 >
-                  RA Digital Solutions
+                  iKRA Studio
                 </a>
               </p>
               <p className="text-gray-500 text-xs mt-1">
                 <a href="tel:+918788292204" className="hover:text-gray-400 transition-colors duration-300">
-                  +91 8983985787<br />
-                  +91 9028802444
+                  +91 8983985787
                 </a>
               </p>
             </div>

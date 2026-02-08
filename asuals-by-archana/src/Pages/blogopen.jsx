@@ -4,6 +4,7 @@ import { Calendar, User, Clock } from "lucide-react";
 import Navbar from "../Components/Navbar";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import Footer from "../Components/Footer";
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -163,6 +164,7 @@ const BlogDetailPage = () => {
           </div>
         </article>
       </main>
+      <Footer />
     </>
   );
 };
